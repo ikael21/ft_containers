@@ -1,13 +1,9 @@
+#include <stack>
+#include <vector>
 #include "stack.hpp"
+#include <iostream>
 
 int	main(void) {
-	
-	std::stack<int>	stack1;
-	std::stack<int>	stack2;
 
-	stack1.push(10);
-
-	stack2 = stack1;
-
-	std::stack<int>	stack3(stack1);
+//	will be some tests for my containers
 }
