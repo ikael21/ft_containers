@@ -23,7 +23,7 @@ public:
 	~stack() {}
 
 	stack&	operator=(const stack& other) {
-		if (this == other)
+		if (this == &other)
 			return *this;
 		_cont = other._cont;
 		return *this;
