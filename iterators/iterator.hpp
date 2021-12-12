@@ -29,7 +29,8 @@ struct iterator {
 
 //	The type trait class that provides uniform
 //	interface to the properties of Iterator types
-template<class Iterator> class iterator_traits {
+template<class Iterator>
+class iterator_traits {
 
 	typedef typename Iterator::difference_type		difference_type;
 	typedef typename Iterator::value_type			value_type;
@@ -41,7 +42,8 @@ template<class Iterator> class iterator_traits {
 
 
 //	T* specialization member types
-template<class T> class iterator_traits<T*> {
+template<class T>
+class iterator_traits<T*> {
 
 	typedef std::ptrdiff_t					difference_type;
 	typedef T								value_type;
@@ -53,7 +55,8 @@ template<class T> class iterator_traits<T*> {
 
 
 //	const T* specialization member types
-template<class T> class iterator_traits<const T*> {
+template<class T>
+class iterator_traits<const T*> {
 
 	typedef std::ptrdiff_t					difference_type;
 	typedef T								value_type;
