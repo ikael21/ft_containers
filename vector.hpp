@@ -38,8 +38,11 @@ public:
 	vector(InputIt first, InputIt last, const allocator_type& alloc = allocator_type());
 */
 
-	vector(const vector& other) { *this = other; }
+// need to change when iterators implementation is done
+	vector(const vector& other)
+	: _alloc(other._alloc), _start(nullptr) { *this = other; }
 
+// need to change when iterators implementation is done
 	vector&	operator=(const vector& other) {
 		if (this == &other)
 			return *this;
@@ -52,6 +55,9 @@ public:
 		_end_capacity = _start + other.capacity();
 		return *this;
 	}
+
+	const_reference	operator[](size_type pos) const { return *(_start + pos); }
+	reference		operator[](size_type pos) { return *(_start + pos); }
 
 	std::size_t	capacity(void) const { return _end_capacity - _start; }
 	std::size_t	size(void) const { return _end - _start; }
