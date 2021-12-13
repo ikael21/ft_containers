@@ -32,12 +32,10 @@ public:
 		return;
 	}
 
-/*
-	template<class InputIt>
-	vector(InputIt first, InputIt last,
-			const allocator_type& alloc = allocator_type()) {
+/*	constructor with iterators as arguments
 
-	}
+	template<class InputIt>
+	vector(InputIt first, InputIt last, const allocator_type& alloc = allocator_type());
 */
 
 	vector(const vector& other) { *this = other; }
@@ -57,6 +55,7 @@ public:
 
 	std::size_t	capacity(void) const { return _end_capacity - _start; }
 	std::size_t	size(void) const { return _end - _start; }
+	bool		empty(void) const { return (_start == _end); }
 
 protected:
 
