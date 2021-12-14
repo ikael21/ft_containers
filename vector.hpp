@@ -1,6 +1,7 @@
 #ifndef VECTOR_H
 # define VECTOR_H
 # include <memory>
+# include "iterators/iterator.hpp"
 
 namespace ft {
 
@@ -10,13 +11,20 @@ class vector {
 
 public:
 
-	typedef T																value_type;
-	typedef Allocator														allocator_type;
-	typedef typename allocator_type::size_type								size_type;
-	typedef typename allocator_type::reference								reference;
-	typedef typename allocator_type::const_reference						const_reference;
-	typedef typename allocator_type::pointer								pointer;
-	typedef typename allocator_type::const_pointer							const_pointer;
+	typedef T														value_type;
+	typedef Allocator												allocator_type;
+	typedef typename allocator_type::size_type						size_type;
+	typedef typename allocator_type::difference_type				difference_type;
+	typedef typename allocator_type::reference						reference;
+	typedef typename allocator_type::const_reference				const_reference;
+	typedef typename allocator_type::pointer						pointer;
+	typedef typename allocator_type::const_pointer					const_pointer;
+	typedef typename ft::iterator_traits<pointer>::pointer			iterator;
+	typedef typename ft::iterator_traits<const_pointer>::pointer	const_iterator;
+/*
+	typedef typename ft::reverse_iterator<iterator>					reverse_iterator;
+	typedef typename ft::reverse_iterator<const_iterator>			const_reverse_iterator;
+*/
 
 	explicit vector(const allocator_type& alloc = allocator_type())
 	: _alloc(alloc), _start(nullptr), _end(nullptr), _end_capacity(nullptr) {}
@@ -32,17 +40,18 @@ public:
 		return;
 	}
 
-/*	constructor with iterators as arguments
-
+/*
 	template<class InputIt>
 	vector(InputIt first, InputIt last, const allocator_type& alloc = allocator_type());
 */
 
-// need to change when iterators implementation is done
+/* need to change when iterators implementation is done */
 	vector(const vector& other)
 	: _alloc(other._alloc), _start(nullptr) { *this = other; }
 
-// need to change when iterators implementation is done
+	~vector(void) { _alloc.deallocate(_start, capacity()); }
+
+/* need to change when iterators implementation is done */
 	vector&	operator=(const vector& other) {
 		if (this == &other)
 			return *this;
@@ -56,11 +65,16 @@ public:
 		return *this;
 	}
 
+/*
+	struct RandomAccessIterator
+	: public ft::iterator<ft::random_access_iterator_tag, T> { };
+*/
+
 	const_reference	operator[](size_type pos) const { return *(_start + pos); }
 	reference		operator[](size_type pos) { return *(_start + pos); }
 
-	std::size_t	capacity(void) const { return _end_capacity - _start; }
-	std::size_t	size(void) const { return _end - _start; }
+	std::size_t	capacity(void) const { return (_end_capacity - _start); }
+	std::size_t	size(void) const { return (_end - _start); }
 	bool		empty(void) const { return (_start == _end); }
 
 protected:
