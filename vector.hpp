@@ -65,13 +65,11 @@ public:
 		return *this;
 	}
 
-/*
-	struct RandomAccessIterator
-	: public ft::iterator<ft::random_access_iterator_tag, T> { };
-*/
-
 	const_reference	operator[](size_type pos) const { return *(_start + pos); }
 	reference		operator[](size_type pos) { return *(_start + pos); }
+
+	iterator	begin(void) { return _start; }
+	iterator	end(void) { return _end; }
 
 	std::size_t	capacity(void) const { return (_end_capacity - _start); }
 	std::size_t	size(void) const { return (_end - _start); }

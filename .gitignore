@@ -31,7 +31,6 @@
 *.out
 *.app
 
-
 # Other unnecessary stuff
 .vscode
 ft_containers-unit-test
