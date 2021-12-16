@@ -1,6 +1,7 @@
 #ifndef VECTOR_H
 # define VECTOR_H
 # include <memory>
+# include <stdexcept>
 # include "iterators/iterator.hpp"
 
 namespace ft {
@@ -55,7 +56,7 @@ public:
 	vector&	operator=(const vector& other) {
 		if (this == &other)
 			return *this;
-		_alloc.deallocate(_start, _end_capacity - _start);
+		_alloc.deallocate(_start, capacity());
 		_alloc = other._alloc;
 		_start = _alloc.allocate(other.capacity());
 		for (std::size_t i = 0; i < other.size(); ++i)
@@ -65,15 +66,55 @@ public:
 		return *this;
 	}
 
-	const_reference	operator[](size_type pos) const { return *(_start + pos); }
-	reference		operator[](size_type pos) { return *(_start + pos); }
+	/* ***************************** */
+	/*     ELEMENT ACCESS METHODS    */
+	/* ***************************** */
+	const_reference		operator[](size_type pos) const { return *(_start + pos); }
+	reference			operator[](size_type pos) { return *(_start + pos); }
 
+	const_reference		at(size_type pos) const {
+		if (!(pos < size()))
+			throw std::out_of_range("out of range");
+		return *(_start + pos);
+	}
+
+	reference			at(size_type pos) {
+		if (!(pos < size()))
+			throw std::out_of_range("out of range");
+		return *(_start + pos);
+	}
+
+	reference			front(void) { return _start[0]; }
+	const_reference		front(void) const { return _start[0]; }
+	reference			back(void) { return _start[size() - 1]; }
+	const_reference		back(void) const { return _start[size() - 1]; }
+	value_type*			data(void) { return _start; }
+	const value_type*	data(void) const { return _start; }
+
+	/* ***************************** */
+	/*         ITERATORS             */
+	/* ***************************** */
 	iterator	begin(void) { return _start; }
 	iterator	end(void) { return _end; }
 
-	std::size_t	capacity(void) const { return (_end_capacity - _start); }
-	std::size_t	size(void) const { return (_end - _start); }
+	/* ***************************** */
+	/*           CAPACITY            */
+	/* ***************************** */
 	bool		empty(void) const { return (_start == _end); }
+	size_type	size(void) const { return (_end - _start); }
+	size_type	max_size(void) const { return _alloc.max_size(); }
+
+	void		reserve(size_type new_cap) {
+		if (!(new_cap <= capacity())) {
+			pointer	_tmp = _alloc.allocate(new_cap);
+			for (std::size_t i = 0; i < size(); ++i)
+				_tmp[i] = _start[i];
+			_alloc.deallocate(_start, capacity());
+			_start = _tmp;
+		}
+	}
+
+	std::size_t	capacity(void) const { return (_end_capacity - _start); }
 
 protected:
 
