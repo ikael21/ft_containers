@@ -49,7 +49,9 @@ public:
 	vector(InputIt first, InputIt last, const allocator_type& alloc = allocator_type());
 */
 
-/* need to change when iterators implementation is done */
+/*
+	need to change when iterators implementation is done
+*/
 	vector(const vector& other) {
 		_alloc = other._alloc;
 		if (!other.size())
@@ -65,7 +67,9 @@ public:
 
 	~vector(void) { _alloc.deallocate(_start, capacity()); }
 
-/* need to change when iterators implementation is done */
+/*
+	need to change when iterators implementation is done
+*/
 	vector&	operator=(const vector& other) {
 		if (this == &other)
 			return *this;
@@ -82,6 +86,8 @@ public:
 		}
 		return *this;
 	}
+
+	allocator_type	get_allocator(void) const { return _alloc; }
 
 
 	/* ***************************** */
@@ -102,14 +108,14 @@ public:
 		return *(_start + pos);
 	}
 
-	reference			front(void) { return _start[0]; }
 	const_reference		front(void) const { return _start[0]; }
+	reference			front(void) { return _start[0]; }
 
-	reference			back(void) { return _start[size() - 1]; }
 	const_reference		back(void) const { return _start[size() - 1]; }
+	reference			back(void) { return _start[size() - 1]; }
 
-	value_type*			data(void) { return _start; }
 	const value_type*	data(void) const { return _start; }
+	value_type*			data(void) { return _start; }
 
 
 	/* ***************************** */
@@ -130,11 +136,11 @@ public:
 
 	void		reserve(size_type new_cap) {
 		if (new_cap > _capacity) {
-			pointer	_tmp = _alloc.allocate(new_cap);
+			pointer	tmp = _alloc.allocate(new_cap);
 			for (size_type i = 0; i < _size; ++i)
-				_tmp[i] = _start[i];
+				tmp[i] = _start[i];
 			_alloc.deallocate(_start, capacity());
-			_start = _tmp;
+			_start = tmp;
 			_capacity = new_cap;
 		}
 	}
@@ -145,7 +151,19 @@ public:
 	/* ************************* */
 	/*         MODIFIERS         */
 	/* ************************* */
-	void	push_back(const T& value) {
+	void	clear(void) {
+		for(size_type i = 0; i < _size; ++i)
+			_alloc.destroy(_start + i);
+		_size = 0;
+	}
+
+/*
+	iterator	insert(iterator pos, const_reference value) {
+		if (size() == capacity())
+			(!capacity()) ? reserve(1) : reserve(capacity() * 2);
+	}
+*/
+	void	push_back(const_reference value) {
 		if (size() == capacity())
 			(!capacity()) ? reserve(1) : reserve(capacity() * 2);
 		_start[size()] = value;
