@@ -1,8 +1,8 @@
 NAME =	check_leaks
 
-SRCS =	src/execute_valgrind.cpp		src/get_valgrind_info.cpp\
-		src/read_info.cpp				src/parse_info.cpp\
-		src/save_info.cpp				src/print_info.cpp
+SRCS =	src/execute_valgrind.cpp	src/get_valgrind_info.cpp\
+		src/read_info.cpp			src/parse_info.cpp\
+		src/save_info.cpp			src/print_info.cpp
 
 MAIN =	src/main.cpp
 
@@ -47,6 +47,7 @@ clean:
 	@rm -rf $(OBJS_DIR)
 	@rm -rf valgrind_logs
 	@echo "$(YELLOW)objs $(RED)deleted$(RESET)"
+	@echo "$(YELLOW)valgrind_logs $(RED)deleted$(RESET)"
 
 fclean: clean
 	@rm -rf $(NAME)

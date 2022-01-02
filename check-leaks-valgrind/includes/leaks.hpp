@@ -34,12 +34,12 @@
 typedef std::vector<std::string>	string_vector;
 
 
-std::string		get_valgrind_info(const char*);
+std::string		get_valgrind_info(char* []);
 void			execute_valgrind(int*, string_vector const&);
 std::string		read_info(int);
-string_vector	parse_info(std::string& info);
-void			save_info(string_vector const& info_vec);
-void			print_info(string_vector const& info_vec);
+string_vector	parse_info(std::string&);
+void			save_info(string_vector const&);
+void			print_info(string_vector const&);
 
 
 #endif
