@@ -1,9 +1,9 @@
 #include "leaks.hpp"
 
-/* *************************************** */
-/* execute valgrind as child proccess      */
-/* and get output info through pipe buffer */
-/* *************************************** */
+/* ***************************************** */
+/* executes valgrind as an child proccess    */
+/* and gets output info through piped buffer */
+/* ***************************************** */
 std::string	get_valgrind_info(char *bin_args[]) {
 
 	string_vector	exec_args;
@@ -20,8 +20,7 @@ std::string	get_valgrind_info(char *bin_args[]) {
 
 	child_pid = fork();
 	if (child_pid == -1) {
-		close(pipe_fd[0]);
-		close(pipe_fd[1]);
+		close(pipe_fd[0]), close(pipe_fd[1]);
 		throw ForkException();
 	}
 	if (!child_pid)
@@ -34,6 +33,5 @@ std::string	get_valgrind_info(char *bin_args[]) {
 	waitpid(child_pid, &status, 0);
 	if (WEXITSTATUS(status) > 0)
 		info.clear();
-
 	return info;
 }

@@ -21,5 +21,6 @@ std::string	read_info(int read_fd) {
 		throw ReadException();
 	}
 
+	delete [] buffer;
 	return info;
 }
