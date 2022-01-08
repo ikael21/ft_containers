@@ -79,59 +79,60 @@ struct iterator {
 
 
 template<class T>
-class RandomAccessIterator : public ft::iterator<ft::random_access_iterator_tag, T> {
-
-private:
-
-	/* ************************** */
-	/*  short type for base iter  */
-	/* ************************** */
-	typedef ft::iterator<ft::random_access_iterator_tag, T>	base_iterator;
+class RandomAccessIterator {
 
 public:
 
-	typedef typename base_iterator::iterator_category	iterator_category;
-	typedef typename base_iterator::value_type			value_type;
-	typedef typename base_iterator::difference_type		difference_type;
-	typedef typename base_iterator::pointer				pointer;
-	typedef typename base_iterator::reference			reference;
+	/* ************************* */
+	/*   PUBLIC ITERATOR TYPES   */
+	/* ************************* */
+	typedef	typename ft::iterator_traits<T*>::iterator_category	iterator_category;
+	typedef	typename ft::iterator_traits<T*>::value_type		value_type;
+	typedef	typename ft::iterator_traits<T*>::difference_type	difference_type;
+	typedef	typename ft::iterator_traits<T*>::pointer			pointer;
+	typedef	typename ft::iterator_traits<T*>::reference			reference;
 
-	RandomAccessIterator(void) : _ptr(nullptr) {}
-	RandomAccessIterator(pointer const ptr) : _ptr(ptr) {}
+
+	RandomAccessIterator(pointer const ptr = nullptr) : _ptr(ptr) {}
 	RandomAccessIterator(const RandomAccessIterator& other) : _ptr(other._ptr) {}
 	~RandomAccessIterator() {}
 
+
+	/* ************************* */
+	/*   ASSIGNMENT OPERATORS    */
+	/* ************************* */
 	RandomAccessIterator&	operator=(const RandomAccessIterator& other) {
 		if (this != &other)
 			_ptr = other.ptr;
 		return *this;
 	}
 
-	RandomAccessIterator&	operator+=(difference_type n) {
-		_ptr += n;
-		return *this;
-	}
+	RandomAccessIterator&	operator+=(difference_type n) { _ptr += n; return *this; }
+	RandomAccessIterator&	operator-=(difference_type n) { _ptr -= n; return *this; }
 
-	RandomAccessIterator&	operator-=(difference_type n) {
-		_ptr -= n;
-		return *this;
-	}
 
+	/* ******************************* */
+	/* INCREMENT / DECREMENT OPERATORS */
+	/* ******************************* */
 	RandomAccessIterator&	operator++(void) { ++_ptr; return *this; }
 	RandomAccessIterator&	operator--(void) { --_ptr; return *this; }
 
-	RandomAccessIterator&	operator++(int) {
+	RandomAccessIterator	operator++(int) {
 		RandomAccessIterator copy(*this);
 		++_ptr;
 		return copy;
 	}
 
-	RandomAccessIterator&	operator--(int) {
+	RandomAccessIterator	operator--(int) {
 		RandomAccessIterator copy(*this);
 		--_ptr;
 		return copy;
 	}
 
+
+	/* ************************* */
+	/*   ARITHMETIC OPERATORS    */
+	/* ************************* */
 	RandomAccessIterator	operator+(difference_type n) const {
 		return _ptr + n;
 	}
@@ -139,10 +140,21 @@ public:
 		return _ptr - n;
 	}
 
-	bool	operator!=(const RandomAccessIterator& other) const {
-		return !(_ptr == other._ptr);
-	}
 
+	/* ************************* */
+	/*   COMPARISON OPERATORS    */
+	/* ************************* */
+	bool	operator!=(const RandomAccessIterator& o) const { return (_ptr != o._ptr); }
+	bool	operator==(const RandomAccessIterator& o) const { return (_ptr == o._ptr); }
+	bool	operator>=(const RandomAccessIterator& o) const { return (_ptr >= o._ptr); }
+	bool	operator<=(const RandomAccessIterator& o) const { return (_ptr <= o._ptr); }
+	bool	operator>(const RandomAccessIterator& o) const { return (_ptr > o._ptr); }
+	bool	operator<(const RandomAccessIterator& o) const { return (_ptr < o._ptr); }
+
+
+	/* ************************* */
+	/*  MEMBER ACCESS OPERATORS  */
+	/* ************************* */
 	reference	operator*(void) { return *_ptr; };
 
 
