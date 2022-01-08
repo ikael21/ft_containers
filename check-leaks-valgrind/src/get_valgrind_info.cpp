@@ -1,7 +1,7 @@
 #include "leaks.hpp"
 
 /* ***************************************** */
-/* executes valgrind as an child proccess    */
+/* executes valgrind as a child proccess     */
 /* and gets output info through piped buffer */
 /* ***************************************** */
 std::string	get_valgrind_info(char *bin_args[]) {
