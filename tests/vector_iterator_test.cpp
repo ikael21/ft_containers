@@ -20,7 +20,8 @@ void	fill_in_container(Container& c) {
 /* begin() and end() methods             */
 /* ************************************* */
 template<class Container>
-void	print_container_items(Container& c, const char* which_cont) {
+void	print_container_items(Container& c,
+							const char* which_cont) {
 
 	typedef typename Container::iterator	iter;
 
@@ -32,7 +33,7 @@ void	print_container_items(Container& c, const char* which_cont) {
 	return;
 }
 
-int	main(void) {
+void	iterator_test(void) {
 
 	std::vector<int>	std_vec;
 	ft::vector<int>		my_vec;
@@ -40,9 +41,14 @@ int	main(void) {
 	fill_in_container(std_vec);
 	fill_in_container(my_vec);
 
-	print_container_items(std_vec, "STD VECTOR");
-	print_container_items(my_vec, "MY VECTOR");
+	std::vector<int>::iterator	iter1 = std_vec.begin();
+	std::cout << iter1[5] << std::endl;
 
+	ft::vector<int>::iterator	iter2 = my_vec.begin();
+	std::cout << iter2[5] << std::endl;
 
 }
 
+int	main(void) {
+	iterator_test();
+}
