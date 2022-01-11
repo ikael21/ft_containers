@@ -1,12 +1,11 @@
-#include <vector>
-#include <iostream>
-#include <chrono>
-#include "vector.hpp"
+#include "tests_includes.hpp"
 
 using namespace std::chrono;
 
 #define MAX_RAM			4294967296
 #define BUFFER_SIZE		4096
+#define MY_VEC			"my vector"
+#define STD_VEC			"std. vector"
 
 struct Buffer {
 	int idx;
@@ -15,36 +14,45 @@ struct Buffer {
 
 #define COUNT	(MAX_RAM / (int)sizeof(Buffer))
 
-typedef std::vector<Buffer>		std_vector;
-typedef ft::vector<Buffer>		my_vector;
+typedef std::vector<Buffer>	std_vector;
+typedef ft::vector<Buffer>	my_vector;
 
-void	test_std_vector(void) {
+/* ************************************** */
+/* Container must have push_back() method */
+/* ************************************** */
+template<class Container>
+void	speed_test(void) {
 
-	std_vector	vector_buffer;
-
-	for(size_t i = 0; i < COUNT; ++i)
-		vector_buffer.push_back(Buffer());
-}
-
-void	test_my_vector(void) {
-
-	my_vector	vector_buffer;
+	Container	c;
 
 	for(size_t i = 0; i < COUNT; ++i)
-		vector_buffer.push_back(Buffer());
+		c.push_back(Buffer());
+	return;
 }
 
-void	measure_time(void (*func)(void), const char* which_vec) {
-	auto start = high_resolution_clock::now();
+void	measure_time(void (*func)(void),
+					const std::string& which_vec) {
+
+	system_clock::time_point	start, end;
+	microseconds				duration;
+
+	start = high_resolution_clock::now();
 	func();
-	auto end = high_resolution_clock::now();
-	auto duration = duration_cast<microseconds>(end - start);
+	end = high_resolution_clock::now();
+
+	duration = duration_cast<microseconds>(end - start);
 	std::cout << which_vec << ": "
 		<< duration.count() / 1000 << " ms" << std::endl;
+	return;
 }
 
+void	run_speed_test(void) {
+	measure_time(speed_test<my_vector> ,MY_VEC);
+	measure_time(speed_test<std_vector>, STD_VEC);
+	return;
+}
+
+//	if I want to compile this file as separate binary
 int	main(void) {
-	measure_time(test_std_vector, "std. vector");
-	measure_time(test_my_vector, "my vector");
-	return EXIT_SUCCESS;
+	run_speed_test();
 }
