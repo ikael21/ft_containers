@@ -84,7 +84,7 @@ class RandomAccessIterator {
 public:
 
 	/* ************************* */
-	/*   PUBLIC ITERATOR TYPES   */
+	/*     ITERATOR TYPES        */
 	/* ************************* */
 	typedef	typename ft::iterator_traits<T*>::iterator_category	iterator_category;
 	typedef	typename ft::iterator_traits<T*>::value_type		value_type;
@@ -93,7 +93,7 @@ public:
 	typedef	typename ft::iterator_traits<T*>::reference			reference;
 
 
-	RandomAccessIterator(pointer const ptr = nullptr) : _ptr(ptr) {}
+	explicit RandomAccessIterator(pointer const ptr = nullptr) : _ptr(ptr) {}
 	RandomAccessIterator(const RandomAccessIterator& other) : _ptr(other._ptr) {}
 	~RandomAccessIterator() {}
 
@@ -156,6 +156,7 @@ public:
 	/*  MEMBER ACCESS OPERATORS  */
 	/* ************************* */
 	reference	operator*(void) { return *_ptr; };
+	reference	operator[](difference_type n) { return *(_ptr + n); }
 
 
 
