@@ -29,9 +29,10 @@ public:
 */
 
 	explicit vector(const allocator_type& alloc = allocator_type())
-	: _alloc(alloc), _start(nullptr), _size(0), _capacity(0) {}
+	: _alloc(alloc), _start(NULL), _size(0), _capacity(0) {}
 
-	explicit vector(size_type count, const value_type& value = value_type(),
+	explicit vector(size_type count,
+					const value_type& value = value_type(),
 					const allocator_type& alloc = allocator_type())
 	: _alloc(alloc) {
 		if (!count)
@@ -40,8 +41,7 @@ public:
 			_start = _alloc.allocate(count);
 			for (size_type i = 0; i < count; ++i)
 				_start[i] = value;
-			_size = count;
-			_capacity = _size;
+			_size = count, _capacity = count;
 		}
 	}
 
@@ -155,24 +155,29 @@ public:
 	/* ************************* */
 	/*         MODIFIERS         */
 	/* ************************* */
-	void	clear(void) {
+	void		clear(void) {
 		for(size_type i = 0; i < _size; ++i)
 			_alloc.destroy(_start + i);
 		_size = 0;
 	}
 
-/*
 	iterator	insert(iterator pos, const_reference value) {
-		if (size() == capacity())
-			(!capacity()) ? reserve(1) : reserve(capacity() * 2);
-	}
-*/
 
-	void	push_back(const_reference value) {
+		difference_type index = pos - begin();
+
 		if (size() == capacity())
 			(!capacity()) ? reserve(1) : reserve(capacity() * 2);
-		_start[size()] = value;
+
+		difference_type i = size();
+		for(; i > index; --i)
+			_start[i] = _start[i - 1];
+		_start[i] = value;
 		_size++;
+		return iterator(begin() + index);
+	}
+
+	void		push_back(const_reference value) {
+		insert(end(), value);
 	}
 
 protected:
@@ -185,7 +190,7 @@ protected:
 private:
 
 	void	default_init(void) {
-		_start = nullptr;
+		_start = NULL;
 		_size = 0;
 		_capacity = 0;
 	}
