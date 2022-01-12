@@ -1,8 +1,11 @@
-#include "vector.hpp"
-#include <vector>
-#include <iostream>
+#include "tests_includes.hpp"
 
 #define MAX_ITEMS	10
+
+typedef typename ft::vector<int>::iterator			ft_iter;
+typedef typename ft::vector<int>::const_iterator	ft_const_iter;
+typedef typename std::vector<int>::iterator			std_iter;
+typedef typename std::vector<int>::const_iterator	std_const_iter;
 
 /* ************************************** */
 /* Container must have push_back() method */
@@ -15,24 +18,6 @@ void	fill_in_container(Container& c) {
 	return;
 }
 
-/* ************************************* */
-/* Container must have iterator system,  */
-/* begin() and end() methods             */
-/* ************************************* */
-template<class Container>
-void	print_container_items(Container& c,
-							const char* which_cont) {
-
-	typedef typename Container::iterator	iter;
-
-	std::cout << which_cont << std::endl;
-	for(iter it = c.begin(); it != c.end(); ++it)
-		std::cout << *it << " ";
-	std::cout << std::endl << ">>>>>END<<<<<"
-		<< std::endl << std::endl;
-	return;
-}
-
 void	iterator_test(void) {
 
 	std::vector<int>	std_vec;
@@ -41,14 +26,13 @@ void	iterator_test(void) {
 	fill_in_container(std_vec);
 	fill_in_container(my_vec);
 
-	std::vector<int>::iterator	iter1 = std_vec.begin();
+	print_container_items(std_vec, "STD VEC");
+	print_container_items(my_vec, "MY VEC");
+
+	std_iter iter1 = std_vec.begin();
 	std::cout << iter1[5] << std::endl;
 
-	ft::vector<int>::iterator	iter2 = my_vec.begin();
+	ft_iter iter2 = my_vec.begin();
 	std::cout << iter2[5] << std::endl;
-
-}
-
-int	main(void) {
-	iterator_test();
+	return;
 }

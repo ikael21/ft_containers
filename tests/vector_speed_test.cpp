@@ -21,7 +21,7 @@ typedef ft::vector<Buffer>	my_vector;
 /* Container must have push_back() method */
 /* ************************************** */
 template<class Container>
-void	speed_test(void) {
+void	run_speed_test(void) {
 
 	Container	c;
 
@@ -46,13 +46,8 @@ void	measure_time(void (*func)(void),
 	return;
 }
 
-void	run_speed_test(void) {
-	measure_time(speed_test<my_vector> ,MY_VEC);
-	measure_time(speed_test<std_vector>, STD_VEC);
+void	speed_test(void) {
+	measure_time(run_speed_test<my_vector> ,MY_VEC);
+	measure_time(run_speed_test<std_vector>, STD_VEC);
 	return;
-}
-
-//	if I want to compile this file as separate binary
-int	main(void) {
-	run_speed_test();
 }
