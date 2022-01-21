@@ -25,7 +25,7 @@ struct enable_if<true, T> { typedef T type; };
 /* Base class for is_integral struct         */
 /* wraps a static constant of specified type */
 /* ***************************************** */
-template<class T, bool v>
+template<class T, T v>
 struct integral_constant {
 
 	static const bool value = v;
@@ -34,6 +34,7 @@ struct integral_constant {
 	operator value_type() const { return value; }
 
 };
+
 
 /* ****************************************** */
 /* Bool variants of integral_constant struct  */
