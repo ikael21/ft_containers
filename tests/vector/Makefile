@@ -1,11 +1,12 @@
 NAME =	vector_test
 
-SRCS =	vector_iterator_test.cpp	vector_speed_test.cpp\
-		vector_insert_test.cpp
+SRCS =	srcs/constructors_test.cpp	srcs/utils/measure_time.cpp\
+		srcs/assign_test.cpp
 
 MAIN =	main.cpp
 
-CONTAINER_DIR = ../ft_containers
+INCLUDES_DIR =	../includes
+CONT_DIR =		../../ft_containers
 
 OBJS = $(patsubst %.cpp,$(OBJS_DIR)/%.o, $(SRCS))
 D_FILES = $(patsubst %.cpp,$(OBJS_DIR)/%.d, $(SRCS))
@@ -13,7 +14,7 @@ OBJS_DIR = objs
 ALL_OBJS_DIRS = $(sort $(dir $(OBJS)))
 
 CC = clang++
-FLAGS = -Wall -Wextra -Werror -std=c++11
+FLAGS = -Wall -Wextra -Werror -pedantic -std=c++11
 
 #colors for beauty
 YELLOW =	\033[33;1m
@@ -29,7 +30,7 @@ ERASE = \33[2K
 all: $(NAME)
 
 $(NAME): $(ALL_OBJS_DIRS) $(OBJS) $(MAIN)
-	@$(CC) $(FLAGS) -I$(CONTAINER_DIR) $(MAIN) $(OBJS) -o $(NAME)
+	@$(CC) $(FLAGS) -I$(INCLUDES_DIR) -I$(CONT_DIR) $(MAIN) $(OBJS) -o $(NAME)
 	@echo "\n$(MAGENTA)$(NAME) $(GREEN)compiled$(RESET)"
 
 $(ALL_OBJS_DIRS): $(OBJS_DIR)
@@ -39,17 +40,17 @@ $(OBJS_DIR):
 	@mkdir -p $(OBJS_DIR)
 
 $(OBJS_DIR)/%.o:%.cpp
-	@$(CC) $(FLAGS) -I$(CONTAINER_DIR) -c $< -o $@ -MMD
+	@$(CC) $(FLAGS) -I$(INCLUDES_DIR) -I$(CONT_DIR) -c $< -o $@ -MMD
 	@printf "$(ERASE)$(RED)>> $(YELLOW)[$@]$(GREEN)$(RESET)\r"
 
 include $(wildcard $(D_FILES))
 
 clean:
 	@rm -rf $(OBJS_DIR)
-	@echo "$(YELLOW)objs $(RED)deleted$(RESET)"
+	@echo "$(YELLOW)$(OBJS_DIR) dir. $(RED)deleted$(RESET)"
 
 fclean: clean
-	@rm -rf $(NAME) $(NAME).dSYM
+	@rm -rf $(NAME)
 	@echo "$(MAGENTA)$(NAME) $(RED)deleted$(RESET)"
 
 re: fclean all

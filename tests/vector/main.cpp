@@ -2,6 +2,6 @@
 
 int	main(void) {
 
-	run_insert_tests();
-	return (EXIT_SUCCESS);
+	run_constructor_test();
+	run_assign_test();
 }
