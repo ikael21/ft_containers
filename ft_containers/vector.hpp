@@ -2,6 +2,7 @@
 # define VECTOR_H
 # include <memory>
 # include <stdexcept>
+# include "utility/type_traits.hpp"
 # include "iterators/iterator.hpp"
 
 namespace ft {
@@ -31,66 +32,86 @@ public:
 	explicit vector(const allocator_type& alloc = allocator_type())
 	: _alloc(alloc), _start(NULL), _size(0), _capacity(0) {}
 
-	explicit vector(size_type count,
-					const value_type& value = value_type(),
-					const allocator_type& alloc = allocator_type())
-	: _alloc(alloc) {
-		if (!count)
-			default_init();
-		else {
-			_start = _alloc.allocate(count);
-			for (size_type i = 0; i < count; ++i)
-				_start[i] = value;
-			_size = count, _capacity = count;
-		}
-	}
 
-/*
+	explicit vector(
+			size_type count,
+			const value_type& value = value_type(),
+			const allocator_type& alloc = allocator_type()
+	)
+	: _alloc(alloc), _start(NULL), _size(0), _capacity(0)
+	{ assign(count, value); }
+
+
 	template<class InputIt>
-	vector(InputIt first, InputIt last, const allocator_type& alloc = allocator_type());
-*/
+	vector(
+		InputIt __first,
+		typename ft::enable_if<!ft::is_integral<InputIt>::value, InputIt>::type __last,
+		const allocator_type& __alloc = allocator_type()
+	)
+	: _alloc(__alloc), _start(NULL), _size(0), _capacity(0)
+	{ assign(__first, __last); }
 
 
+	vector(const vector& o)
+	: _alloc(o.get_allocator()), _start(NULL), _size(0), _capacity(0)
+	{ assign(o.begin(), o.end()); }
 
-/*
-	need to change when iterators implementation is done
-*/
-	vector(const vector& other) {
-		_alloc = other._alloc;
-		if (!other.size())
-			default_init();
-		else {
-			_start = _alloc.allocate(other.capacity());
-			for(size_type i = 0; i < other._size; ++i)
-				_start[i] = other._start[i];
-			_size = other._size;
-			_capacity = other._capacity;
-		}
-	}
 
-	~vector() { clear(); _alloc.deallocate(_start, capacity()); }
+	~vector() { clear(); _alloc.deallocate(_start, _capacity); }
 
-/*
-	need to change when iterators implementation is done
-*/
+
 	vector&	operator=(const vector& other) {
-		if (this == &other)
-			return *this;
-		_alloc.deallocate(_start, capacity());
-		_alloc = other._alloc;
-		if (!other.size())
-			default_init();
-		else {
-			_start = _alloc.allocate(other.capacity());
-			for (std::size_t i = 0; i < other.size(); ++i)
-				_start[i] = other._start[i];
-			_size = other._size;
-			_capacity = other._capacity;
-		}
+		if (this != &other)
+			assign(other.begin(), other.end());
 		return *this;
 	}
 
 	allocator_type	get_allocator(void) const { return _alloc; }
+
+	void			assign(size_type count, const_reference value) {
+
+		size_type i = 0;
+
+		reserve(count);
+		while (i < _size and i < count) {
+			_start[i] = value;
+			++i;
+		}
+
+		while (i < count) {
+			_alloc.construct(_start + i, value);
+			++i;
+		}
+
+		while (i < _size) {
+			_alloc.destroy(_start + i);
+			++i;
+		}
+		_size = count;
+	}
+
+	template<class InputIt>
+	typename ft::enable_if<!ft::is_integral<InputIt>::value, void>::type
+	assign(InputIt __first, InputIt __last) {
+
+		size_type new_cap = __last - __first;
+		size_type i = 0;
+
+		reserve(new_cap);
+		while (i < _size and __first != __last) {
+			_start[i] = *__first;
+			++i;
+			++__first;
+		}
+
+		std::uninitialized_copy(__first, __last, _start + i);
+
+		while (i < _size) {
+			_alloc.destroy(_start + i);
+			++i;
+		}
+		_size = new_cap;
+	}
 
 
 	/* ***************************** */
@@ -100,13 +121,13 @@ public:
 	reference			operator[](size_type pos) { return *(_start + pos); }
 
 	const_reference		at(size_type pos) const {
-		if (!(pos < size()))
+		if (!(pos < _size))
 			throw std::out_of_range("out of range");
 		return *(_start + pos);
 	}
 
 	reference			at(size_type pos) {
-		if (!(pos < size()))
+		if (!(pos < _size))
 			throw std::out_of_range("out of range");
 		return *(_start + pos);
 	}
@@ -114,8 +135,8 @@ public:
 	const_reference		front(void) const { return _start[0]; }
 	reference			front(void) { return _start[0]; }
 
-	const_reference		back(void) const { return _start[size() - 1]; }
-	reference			back(void) { return _start[size() - 1]; }
+	const_reference		back(void) const { return _start[_size - 1]; }
+	reference			back(void) { return _start[_size - 1]; }
 
 	const value_type*	data(void) const { return _start; }
 	value_type*			data(void) { return _start; }
@@ -125,25 +146,32 @@ public:
 	/*         ITERATORS             */
 	/* ***************************** */
 	iterator		begin(void) { return iterator(_start); }
-	const_iterator	begin(void) const { return iterator(_start); }
+	const_iterator	begin(void) const { return const_iterator(_start); }
 
-	iterator		end(void) { return iterator(_start + size()); }
-	const_iterator	end(void) const { return iterator(_start + size()); }
+	iterator		end(void) { return iterator(_start + _size); }
+	const_iterator	end(void) const { return const_iterator(_start + _size); }
 
 
 	/* ***************************** */
 	/*           CAPACITY            */
 	/* ***************************** */
-	bool		empty(void) const { return (!size()); }
+	bool		empty(void) const { return (!_size); }
 	size_type	size(void) const { return _size; }
 	size_type	max_size(void) const { return _alloc.max_size(); }
 
 	void		reserve(size_type new_cap) {
+
+		if (new_cap > max_size())
+			throw std::length_error("vector::reserve");
+
 		if (new_cap > _capacity) {
 			pointer	tmp = _alloc.allocate(new_cap);
+			std::uninitialized_copy(begin(), end(), tmp);
+
 			for (size_type i = 0; i < _size; ++i)
-				tmp[i] = _start[i];
-			_alloc.deallocate(_start, capacity());
+				_alloc.destroy(_start + i);
+			_alloc.deallocate(_start, _capacity);
+
 			_start = tmp;
 			_capacity = new_cap;
 		}
@@ -156,28 +184,83 @@ public:
 	/*         MODIFIERS         */
 	/* ************************* */
 	void		clear(void) {
-		for(size_type i = 0; i < _size; ++i)
+		for (size_type i = 0; i < _size; ++i)
 			_alloc.destroy(_start + i);
 		_size = 0;
 	}
 
 	iterator	insert(iterator pos, const_reference value) {
 
-		difference_type index = pos - begin();
+		size_type index = pos - begin();
 
-		if (size() == capacity())
-			(!capacity()) ? reserve(1) : reserve(capacity() * 2);
+		if (_size == _capacity)
+			(!_capacity) ? reserve(1) : reserve(_capacity * 2);
 
-		difference_type i = size();
-		for(; i > index; --i)
+		_alloc.construct(_start + _size, _start[_size - 1]);
+		size_type i = _size - 1;
+		for (; i > index; --i)
 			_start[i] = _start[i - 1];
+
 		_start[i] = value;
 		_size++;
 		return iterator(begin() + index);
 	}
 
+	void	insert(
+			iterator pos, size_type count,
+			const_reference value) {
+		if (!count)
+			return;
+
+		size_type index = pos - begin();
+		size_type new_size = _size + count;
+
+		if (count >= _capacity)
+			reserve(new_size);
+		else if (new_size > _capacity) {
+			size_type new_cap = (!_capacity) ? 1 : _capacity;
+			while (new_cap < new_size)
+				new_cap *= 2;
+			reserve(new_cap);
+		}
+
+		for (size_type i = _size - 1; i >= index; --i)
+			_alloc.construct(_start + i + count, _start[i]);
+
+		for (size_type i = 0; i < count; ++i)
+			_alloc.construct(_start + i + index, value);
+		_size = new_size;
+	}
+
 	void		push_back(const_reference value) {
-		insert(end(), value);
+		if (_size == _capacity)
+			(!_capacity) ? reserve(1) : reserve(_capacity * 2);
+		_alloc.construct(_start + _size, value);
+		_size++;
+	}
+
+	void		pop_back(void) { _alloc.destroy(_start + (_size - 1)); _size--; }
+
+	void		resize(
+				size_type count,
+				value_type value = value_type()) {
+
+		if (count > _size) {
+			while (count > _size)
+				pop_back();
+			return;
+		}
+
+		if (count < _size)
+			while (count < _size)
+				push_back(value);
+	}
+
+	void		swap(vector& other) {
+		std::swap(_alloc, other._alloc);
+		std::swap(_start, other._start);
+		std::swap(_size, other._size);
+		std::swap(_capacity, other._capacity);
 	}
 
 protected:
