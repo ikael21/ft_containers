@@ -93,17 +93,15 @@ public:
 	typedef	typename ft::iterator_traits<T*>::reference			reference;
 
 
-	RandomAccessIterator(pointer const ptr = NULL) : _ptr(ptr) {}
+	explicit RandomAccessIterator(pointer const ptr = NULL) : _ptr(ptr) {}
 	RandomAccessIterator(const RandomAccessIterator& other) : _ptr(other._ptr) {}
-	~RandomAccessIterator() {}
 
 
 	/* ************************* */
 	/*   ASSIGNMENT OPERATORS    */
 	/* ************************* */
 	RandomAccessIterator&	operator=(const RandomAccessIterator& other) {
-		if (this != &other)
-			_ptr = other._ptr;
+		_ptr = other._ptr;
 		return *this;
 	}
 
@@ -134,10 +132,11 @@ public:
 	/*   ARITHMETIC OPERATORS    */
 	/* ************************* */
 	RandomAccessIterator	operator+(difference_type n) const {
-		return _ptr + n;
+		return RandomAccessIterator(_ptr + n);
 	}
+
 	RandomAccessIterator	operator-(difference_type n) const {
-		return _ptr - n;
+		return RandomAccessIterator(_ptr - n);
 	}
 
 	difference_type			operator-(const RandomAccessIterator& other) const {
@@ -169,6 +168,13 @@ private:
 	pointer	_ptr;
 
 };
+
+
+template<class T>
+RandomAccessIterator<T>	operator+(
+			const typename RandomAccessIterator<T>::difference_type& n,
+			const RandomAccessIterator<T>& iter)
+{ return RandomAccessIterator<T>(iter + n); }
 
 
 }
