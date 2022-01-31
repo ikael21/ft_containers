@@ -70,6 +70,7 @@ void	run_assign_test(void);
 void	run_constructor_test(void);
 void	run_pop_back_test(void);
 void	run_push_back_test(void);
+void	run_resize_test(void);
 
 
 /* ************************* */

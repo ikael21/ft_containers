@@ -8,4 +8,5 @@ int	main(void) {
 	run_push_back_test();
 	run_iterator_test();
 	run_insert_test();
+	run_resize_test();
 }
