@@ -2,6 +2,7 @@
 # define TESTS_INCLUDES_H
 
 # include <iostream>
+# include <sstream>
 # include <vector>
 # include <chrono>
 # include "vector.hpp"
@@ -11,32 +12,42 @@
 using namespace std::chrono;
 
 # define TEST_VECTOR	ft::vector
+# define print			std::cout
+# define LF				"\n"
 
+struct A {
 
-# define print		std::cout
-# define STD_VEC	"std::vector"
-# define FT_VEC		"ft::vector"
-# define LF			"\n"
-# define MAX_RAM	4294967296
-# define BUF_SIZE	4096
+	A() : _n(new char()) {}
 
-struct Buffer {
-	int idx;
-	char buff[BUF_SIZE];
+	A(const A& o) : _n(new char(*o._n)) {}
+
+	A&	operator=(const A&o) {
+		delete _n;
+		_n = new char(*o._n);
+		return *this;
+	}
+
+	~A() { delete _n; }
+
+	bool	operator!=(const A&) const { return false; }
+
+private:
+
+	char*	_n;
+
 };
 
-#define COUNT		(MAX_RAM / (int)sizeof(Buffer))
+
 #define SMALL_COUNT	100000
-#define TEST_STRING	"string"
 
 // short types for vectors and their iterators
-typedef std::vector<std::string>	std_vector;
+typedef std::vector<A>				std_vector;
 typedef std_vector::const_iterator	RandIter;
-typedef TEST_VECTOR<std::string>	ft_vector;
+typedef TEST_VECTOR<A>				ft_vector;
 
 
 // stl vector to compare the test one with
-const std_vector	g_vecToCompare(SMALL_COUNT, TEST_STRING);
+static std_vector	g_vecToCompare(SMALL_COUNT);
 const RandIter		g_begin = g_vecToCompare.begin();
 const RandIter		g_end = g_vecToCompare.end();
 
@@ -54,16 +65,17 @@ const RandIter		g_end = g_vecToCompare.end();
 /*      TEST FUNCTIONS       */
 /* ************************* */
 void	run_iterator_test(void);
-void	speed_test(void);
-void	run_insert_tests(void);
+void	run_insert_test(void);
 void	run_assign_test(void);
 void	run_constructor_test(void);
-void	pop_back_test(void);
+void	run_pop_back_test(void);
+void	run_push_back_test(void);
 
 
 /* ************************* */
 /*         UTILITY           */
 /* ************************* */
+
 
 size_t	measure_time(void (*)(void));
 
