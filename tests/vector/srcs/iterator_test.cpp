@@ -1,63 +1,78 @@
 #include "tests_includes.hpp"
+#include <map>
 
-typedef std::vector<int>	std_v;
-typedef std_v::iterator		std_i;
+static void	test1(void) {
 
-typedef ft::vector<int>		ft_v;
-typedef ft_v::iterator		ft_i;
+	std_vector::iterator	iter1;
+	std_vector::iterator	iter2;
+	ft_vector::iterator		iter3;
+	ft_vector::iterator		iter4;
+	std::string				result;
 
-template<class Container>
-void	iterator_test1(const char* cont_name) {
-
-	typedef typename Container::iterator	iter;
-
-	Container	cont;
-	iter		i;
-
-	print << YELLOW "Iterator test: number + iter ---- " GREEN
-		<< cont_name << RESET LF;
-	fill_in_container(cont);
-	i = (MAX_ITEMS / 2) + cont.begin();
-	print << *i << LF;
+	if (iter1 == iter2 and iter3 == iter4)
+		result = GREEN ".";
+	else
+		result = RED "F";
+	print << result;
 }
 
-template<class Container>
-void	iterator_test2(const char* cont_name) {
+static void	test2(void) {
 
-	typedef typename Container::iterator	iter;
+	std_vector::iterator	iter1;
+	ft_vector::iterator		iter4;
+	std::string				result;
 
-	Container	cont;
-	iter		i;
+	if (iter1 == iter4)
+		result = GREEN ".";
+	else
+		result = RED "F";
+	print << result;
+}
 
-	print << YELLOW "Iterator test: iter + number ---- " GREEN
-		<< cont_name << RESET LF;
-	fill_in_container(cont);
-	i = cont.begin() + (MAX_ITEMS / 2);
-	print << *i << LF;
+static void	test3(void) {
+
+	ft_vector				ft_vec(10);
+	std_vector::iterator	iter1;
+	std_vector::iterator	iter2;
+	ft_vector::iterator		iter3;
+	ft_vector::iterator		iter4;
+	std::string				result;
+
+	iter1 = g_vecToCompare.begin();
+	iter2 = g_vecToCompare.end();
+	iter3 = ft_vec.begin();
+	iter4 = ft_vec.end();
+	if (iter1 < iter2 and iter3 < iter4)
+		result = GREEN ".";
+	else
+		result = RED "F";
+	print << result;
+}
+
+static void	test4(void) {
+
+	ft_vector				ft_vec(10);
+	std_vector::iterator	iter1;
+	std_vector::iterator	iter2;
+	ft_vector::iterator		iter3;
+	ft_vector::iterator		iter4;
+	std::string				result;
+
+	iter1 = g_vecToCompare.begin();
+	iter2 = g_vecToCompare.end();
+	iter3 = ft_vec.begin();
+	iter4 = ft_vec.end();
+	if (iter1 <= iter2 and iter3 <= iter4)
+		result = GREEN ".";
+	else
+		result = RED "F";
+	print << result;
 }
 
 void	run_iterator_test(void) {
 
-	/* ********************** */
-	/*  iter = number + iter  */
-	/* ********************** */
-	iterator_test1<std_v>(STD_VEC);
-	iterator_test1<ft_v>(FT_VEC);
+	print << MAGENTA "ITERATOR TESTS: ";
+	test1(); test2(); test3(); test4();
+	print << RESET LF;
 
-
-	/* ********************** */
-	/*  iter = iter + number  */
-	/* ********************** */
-	iterator_test2<std_v>(STD_VEC);
-	iterator_test2<ft_v>(FT_VEC);
-
-
-	ft_v	ft_vec;
-
-	try {
-		ft_vec.reserve(ft_vec.max_size() + 1);
-	}
-	catch (std::length_error& e) {
-		std::cout << e.what() << std::endl;
-	}
 }

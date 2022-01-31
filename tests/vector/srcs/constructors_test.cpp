@@ -1,35 +1,34 @@
 #include "tests_includes.hpp"
 
 
-static void	constructor_test1(void) {
+static void	test1(void) {
 
 	std::string	result;
 	ft_vector	test_vec(g_begin, g_end);
 
 	if (compare_size_cap(test_vec, g_vecToCompare)
 		&& is_conts_equal(test_vec, g_vecToCompare))
-		result = GREEN "OK" RESET;
+		result = GREEN ".";
 	else
-		result = RED "KO" RESET;
-	print << "test1 (iterators constructor)    " << result << RESET "  ";
-	return;
+		result = RED "F";
+	print << result;
 }
 
 
-static void	constructor_test2(void) {
+static void	test2(void) {
 
 	std::string	result;
-	ft_vector	test_vec(SMALL_COUNT, TEST_STRING);
+	ft_vector	test_vec(SMALL_COUNT, A());
 
 	if (compare_size_cap(test_vec, g_vecToCompare)
 		&& is_conts_equal(test_vec, g_vecToCompare))
-		result = GREEN "OK";
+		result = GREEN ".";
 	else
-		result = RED "KO";
-	print << "test2 (count, value constructor) " << result << RESET "  ";
+		result = RED "F";
+	print << result;
 }
 
-static void	constructor_test3(void) {
+static void	test3(void) {
 
 	std::string	result;
 	ft_vector	vec1(g_begin, g_end);
@@ -37,21 +36,15 @@ static void	constructor_test3(void) {
 	ft_vector	test_vec(vec1);
 	if (compare_size_cap(test_vec, g_vecToCompare)
 		&& is_conts_equal(test_vec, g_vecToCompare))
-		result = GREEN "OK";
+		result = GREEN ".";
 	else
-		result = RED "KO";
-	print << "test3 (copy constructor)         " << result << RESET "  ";
+		result = RED "F";
+	print << result;
 }
 
 void	run_constructor_test(void) {
 
-	size_t	t;
-
-	print << MAGENTA "	CONSTRUCTORS TESTS" RESET LF;
-	t = measure_time(constructor_test1);
-	print << "time: " << YELLOW << t / 1000 << " ms" RESET LF;
-	t = measure_time(constructor_test2);
-	print << "time: " << YELLOW << t / 1000 << " ms" RESET LF;
-	t = measure_time(constructor_test3);
-	print << "time: " << YELLOW << t / 1000 << " ms" RESET LF;
+	print << MAGENTA "CONSTRUCTORS TESTS: ";
+	test1(); test2(); test3();
+	print << RESET LF;
 }

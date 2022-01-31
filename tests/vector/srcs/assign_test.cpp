@@ -1,68 +1,66 @@
 #include "tests_includes.hpp"
-#include <algorithm>
 
 
-static void	assign_test1(void) {
+static void	test1(void) {
 
 	std::string	result;
 	ft_vector	test_vec;
 
 	for (size_t i = 0; i < 1000; ++i)
-		test_vec.assign(i, "a");
+		test_vec.assign(i, A());
 
 	test_vec.assign(g_begin, g_end);
 	if (compare_size_cap(test_vec, g_vecToCompare)
 		&& is_conts_equal(test_vec, g_vecToCompare))
-		result = GREEN "OK";
+		result = GREEN ".";
 	else
-		result = RED "KO";
-	print << "test1 assign(first, last)        " << result << RESET "  ";
+		result = RED "F";
+	print << result;
 }
 
-static void	assign_test2(void) {
+static void	test2(void) {
 
 	std::string	result;
 	ft_vector	test_vec;
 
 	for (size_t i = 0; i < 1000; ++i)
-		test_vec.assign(i, "a");
+		test_vec.assign(i, A());
 
-	test_vec.assign(SMALL_COUNT, TEST_STRING);
+	test_vec.assign(SMALL_COUNT, A());
 	if (compare_size_cap(test_vec, g_vecToCompare)
 		&& is_conts_equal(test_vec, g_vecToCompare))
-		result = GREEN "OK";
+		result = GREEN ".";
 	else
-		result = RED "KO";
-	print << "test2 assign(count, value)       " << result << RESET "  ";
+		result = RED "F";
+	print << result;
 }
 
-static void	assign_test3(void) {
+static void	test3(void) {
 
 	std::string	result;
 	std_vector	std_one;
 	ft_vector	test_vec;
 
-	std_one.assign(SMALL_COUNT, TEST_STRING);
-	test_vec.assign(SMALL_COUNT, TEST_STRING);
+	std_one.assign(SMALL_COUNT, A());
+	test_vec.assign(SMALL_COUNT, A());
 
 	for (size_t i = 1000; i > 0; --i) {
-		test_vec.assign(i, "a");
-		std_one.assign(i, "a");
+		test_vec.assign(i, A());
+		std_one.assign(i, A());
 	}
 
 	if (compare_size_cap(test_vec, std_one)
 		&& is_conts_equal(test_vec, std_one))
-		result = GREEN "OK";
+		result = GREEN ".";
 	else
-		result = RED "KO";
-	print << "test3 assign(count < size)       " << result << RESET "  ";
+		result = RED "F";
+	print << result;
 }
 
-static void	assign_test4(void) {
+static void	test4(void) {
 
 	std::string	result;
 	ft_vector	test_vec;
-	std_vector	std_one;
 
 	for (size_t i = 0; i < 100; ++i)
 		test_vec.assign(g_begin + i + 1, g_end);
@@ -70,25 +68,31 @@ static void	assign_test4(void) {
 	test_vec.assign(g_begin, g_end);
 	if (compare_size_cap(test_vec, g_vecToCompare)
 		&& is_conts_equal(test_vec, g_vecToCompare))
-		result = GREEN "OK";
+		result = GREEN ".";
 	else
-		result = RED "KO";
-	print << "multiple assign(first, last)     " << result << RESET "  ";
+		result = RED "F";
+	print << result;
 }
 
-void	print_item(std::string& s) { print << s << std::endl; }
+static void	test5(void) {
+
+	std::string	result;
+	ft_vector	test_vec(10);
+	std_vector	std_vec(10);
+
+	test_vec.assign(3, A());
+	std_vec.assign(3, A());
+	if (compare_size_cap(test_vec, std_vec)
+		&& is_conts_equal(test_vec, std_vec))
+		result = GREEN ".";
+	else
+		result = RED "F";
+	print << result;
+}
 
 void	run_assign_test(void) {
 
-	size_t	t;
-
-	print << MAGENTA "	ASSIGN TESTS" RESET LF;
-	t = measure_time(assign_test1);
-	print << "time: " << YELLOW << t / 1000 << " ms" RESET LF;
-	t = measure_time(assign_test2);
-	print << "time: " << YELLOW << t / 1000 << " ms" RESET LF;
-	t = measure_time(assign_test3);
-	print << "time: " << YELLOW << t / 1000 << " ms" RESET LF;
-	t = measure_time(assign_test4);
-	print << "time: " << YELLOW << t / 1000 << " ms" RESET LF;
+	print << MAGENTA "ASSIGN TESTS: ";
+	test1(); test2(); test3(); test4(); test5();
+	print << RESET LF;
 }

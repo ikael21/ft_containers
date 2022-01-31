@@ -1,7 +1,9 @@
 NAME =	vector_test
 
 SRCS =	srcs/constructors_test.cpp	srcs/utils/measure_time.cpp\
-		srcs/assign_test.cpp
+		srcs/assign_test.cpp		srcs/pop_back_test.cpp\
+		srcs/push_back_test.cpp		srcs/iterator_test.cpp\
+		srcs/insert_test.cpp
 
 MAIN =	main.cpp
 
@@ -14,7 +16,7 @@ OBJS_DIR = objs
 ALL_OBJS_DIRS = $(sort $(dir $(OBJS)))
 
 CC = clang++
-FLAGS = -Wall -Wextra -Werror -pedantic -std=c++11
+FLAGS = -g -Wall -Wextra -Werror -pedantic -std=c++11
 
 #colors for beauty
 YELLOW =	\033[33;1m
