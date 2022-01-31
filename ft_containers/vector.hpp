@@ -37,7 +37,8 @@ public:
 	explicit vector(
 		size_type count,
 		const value_type& value = value_type(),
-		const allocator_type& alloc = allocator_type())
+		const allocator_type& alloc = allocator_type()
+	)
 	: _alloc(alloc), _start(NULL), _size(0), _capacity(0)
 	{ assign(count, value); }
 
