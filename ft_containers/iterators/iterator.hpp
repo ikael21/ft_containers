@@ -93,8 +93,11 @@ public:
 	typedef	typename ft::iterator_traits<T*>::reference			reference;
 
 
-	explicit RandomAccessIterator(pointer const ptr = NULL) : _ptr(ptr) {}
-	RandomAccessIterator(const RandomAccessIterator& other) : _ptr(other._ptr) {}
+	explicit RandomAccessIterator(pointer const ptr = NULL)
+	: _ptr(ptr) {}
+
+	RandomAccessIterator(const RandomAccessIterator& other)
+	: _ptr(other._ptr) {}
 
 
 	/* ************************* */
@@ -145,22 +148,12 @@ public:
 
 
 	/* ************************* */
-	/*   COMPARISON OPERATORS    */
-	/* ************************* */
-	bool	operator!=(const RandomAccessIterator& o) const { return (_ptr != o._ptr); }
-	bool	operator==(const RandomAccessIterator& o) const { return (_ptr == o._ptr); }
-	bool	operator>=(const RandomAccessIterator& o) const { return (_ptr >= o._ptr); }
-	bool	operator<=(const RandomAccessIterator& o) const { return (_ptr <= o._ptr); }
-	bool	operator>(const RandomAccessIterator& o) const { return (_ptr > o._ptr); }
-	bool	operator<(const RandomAccessIterator& o) const { return (_ptr < o._ptr); }
-
-
-	/* ************************* */
 	/*  MEMBER ACCESS OPERATORS  */
 	/* ************************* */
 	reference	operator*(void) { return *_ptr; };
 	reference	operator[](difference_type n) { return *(_ptr + n); }
-
+	pointer		operator->(void) const { return _ptr; }
+	pointer		base(void) const { return _ptr; }
 
 
 private:
@@ -171,10 +164,40 @@ private:
 
 
 template<class T>
-RandomAccessIterator<T>	operator+(
+inline RandomAccessIterator<T>	operator+(
 			const typename RandomAccessIterator<T>::difference_type& n,
 			const RandomAccessIterator<T>& iter)
 { return RandomAccessIterator<T>(iter + n); }
+
+
+/* *********************************************************************** */
+/* template comparison operators for compatibility with std. iterators or  */
+/* iterators of different type (Bedirectional, Forward, ...)               */
+/* *********************************************************************** */
+
+template<typename _LeftIterator, typename _RightIterator>
+inline bool	operator==(const _LeftIterator& lhs, const _RightIterator& rhs)
+{ return (lhs.base() == rhs.base()); }
+
+template<typename _LeftIterator, typename _RightIterator>
+inline bool	operator!=(const _LeftIterator& lhs, const _RightIterator& rhs)
+{ return (lhs.base() != rhs.base()); }
+
+template<typename _LeftIterator, typename _RightIterator>
+inline bool	operator>=(const _LeftIterator& lhs, const _RightIterator& rhs)
+{ return (lhs.base() >= rhs.base()); }
+
+template<typename _LeftIterator, typename _RightIterator>
+inline bool	operator<=(const _LeftIterator& lhs, const _RightIterator& rhs)
+{ return (lhs.base() <= rhs.base()); }
+
+template<typename _LeftIterator, typename _RightIterator>
+inline bool	operator>(const _LeftIterator& lhs, const _RightIterator& rhs)
+{ return (lhs.base() > rhs.base()); }
+
+template<typename _LeftIterator, typename _RightIterator>
+inline bool	operator<(const _LeftIterator& lhs, const _RightIterator& rhs)
+{ return (lhs.base() < rhs.base()); }
 
 
 }
