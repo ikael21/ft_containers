@@ -161,7 +161,11 @@ public:
 		if (new_cap > _capacity) {
 
 			pointer	tmp = _alloc.allocate(new_cap);
-			std::uninitialized_copy(begin(), end(), tmp);
+
+			try
+			{ std::uninitialized_copy(begin(), end(), tmp); }
+			catch (...)
+			{ _alloc.deallocate(tmp, new_cap); throw; }
 
 			for (size_type i = 0; i < _size; ++i)
 				_alloc.destroy(_start + i);
@@ -221,9 +225,11 @@ public:
 		for (size_type i = _size - 1; i >= index; --i)
 			_alloc.construct(_start + i + count, _start[i]);
 
-//	можно заменить на std::uninitialized_fill()
 		for (size_type i = 0; i < count; ++i)
 			_alloc.construct(_start + i + index, value);
+
+//		could change to code below instead of for() loop above
+//		std::uninitialized_fill(_start + index, _start + count, value);
 		_size = new_size;
 	}
 
@@ -235,19 +241,25 @@ public:
 	}
 
 	void	pop_back(void)
-	{ _alloc.destroy(_start + (_size - 1)); _size--; }
+	{ --_size; _alloc.destroy(_start + _size); }
 
 
 	void	resize(size_type count, value_type value = value_type()) {
 
 		if (count < _size) {
-			while (count > _size)
+			while (count < _size)
 				pop_back();
 			return;
 		}
-		reserve(count);
-		std::uninitialized_fill(_start + _size, _start + count, value);
-		_size += _size - count;
+
+		if (count > _size) {
+			size_type new_cap = _capacity * 2;
+			if (new_cap < count)
+				new_cap = count;
+			reserve(new_cap);
+			for (; _size < count; ++_size)
+				_alloc.construct(_start + _size, value);
+		}
 	}
 
 	void	swap(vector& other) {
