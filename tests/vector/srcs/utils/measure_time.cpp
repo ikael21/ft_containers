@@ -7,12 +7,13 @@ typedef system_clock::time_point	t_time;
 /* the given pointer to a function  */
 /* in microseconds                  */
 /* ******************************** */
-size_t	measure_time(void (*func)(void)) {
+template<class Function>
+size_t	measure_time(Function* f) {
 
 	t_time	start, end;
 
 	start = high_resolution_clock::now();
-	func();
+	f();
 	end = high_resolution_clock::now();
 	return (duration_cast<microseconds>(end - start).count());
 }
