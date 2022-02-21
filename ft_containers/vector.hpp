@@ -1,8 +1,9 @@
 #ifndef VECTOR_H
 # define VECTOR_H
-# include <memory>
+# include "memory/ft_uninitialized.hpp"
 # include <algorithm>
 # include <stdexcept>
+# include <ext/alloc_traits.h>
 # include "utility/type_traits.hpp"
 # include "iterators/iterator.hpp"
 
@@ -39,8 +40,16 @@ public:
 		const value_type& value = value_type(),
 		const allocator_type& alloc = allocator_type()
 	)
-	: _alloc(alloc), _start(NULL), _size(0), _capacity(0)
-	{ assign(count, value); }
+	: _alloc(alloc), _start(NULL), _size(count), _capacity(count) {
+
+		if (count > 0) {
+			_start = _alloc.allocate(count);
+			try
+			{ ft::uninitialized_fill_a(_start, _start + count, value, _alloc); }
+			catch (...)
+			{ _alloc.deallocate(_start, count); throw; }
+		}
+	}
 
 
 	template<class InputIt>
@@ -71,20 +80,23 @@ public:
 
 	void	assign(size_type count, const_reference value) {
 
-		size_type i = 0;
-
-		reserve(count);
-		while (i < _size and i < count) {
-			_start[i] = value;
-			++i;
+		if (count > _capacity) {
+			vector	tmp(count, value, _alloc);
+			tmp.swap(*this);
 		}
-		std::uninitialized_fill(_start + i, _start + count, value);
-		while (i < _size) {
-			_alloc.destroy(_start + i);
-			++i;
+		else if (count > _size) {
+			std::fill(_start, _start + _size, value);
+			const size_type diff = count - _size;
+			ft::uninitialized_fill_n_a(_start + _size,
+				diff, value, _alloc);
+			_size += diff;
 		}
-
-		_size = count;
+		else {
+			std::fill_n(_start, count, value);
+			for (size_t i = count; i < _size; ++i)
+				_alloc.destroy(_start + i);
+			_size = count;
+		}
 	}
 
 	template<class InputIt>
@@ -99,7 +111,7 @@ public:
 			_start[i] = *__first;
 			++i; ++__first;
 		}
-		std::uninitialized_copy(__first, __last, _start + i);
+		ft::uninitialized_copy_a(__first, __last, _start + i, _alloc);
 		while (i < _size) {
 			_alloc.destroy(_start + i);
 			++i;
@@ -164,7 +176,7 @@ public:
 			pointer	tmp = _alloc.allocate(new_cap);
 
 			try
-			{ std::uninitialized_copy(begin(), end(), tmp); }
+			{ ft::uninitialized_copy_a(begin(), end(), tmp, _alloc); }
 			catch (...)
 			{ _alloc.deallocate(tmp, new_cap); throw; }
 

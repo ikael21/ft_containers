@@ -78,7 +78,7 @@ void	run_resize_test(void);
 /* ************************* */
 
 
-size_t	measure_time(void (*)(void));
+//size_t	measure_time(void (*)(void));
 
 
 /* ******************************************************** */
