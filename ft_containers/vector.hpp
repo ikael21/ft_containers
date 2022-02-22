@@ -3,7 +3,6 @@
 # include "memory/ft_uninitialized.hpp"
 # include <algorithm>
 # include <stdexcept>
-# include <ext/alloc_traits.h>
 # include "utility/type_traits.hpp"
 # include "iterators/iterator.hpp"
 
@@ -266,10 +265,12 @@ public:
 		}
 
 		if (count > _size) {
-			size_type new_cap = _capacity * 2;
-			if (new_cap < count)
-				new_cap = count;
-			reserve(new_cap);
+			if (_capacity < count) {
+				size_type new_cap = _capacity * 2;
+				if (new_cap < count)
+					new_cap = count;
+				reserve(new_cap);
+			}
 			for (; _size < count; ++_size)
 				_alloc.construct(_start + _size, value);
 		}
@@ -292,6 +293,15 @@ private:
 };
 
 
+}
+
+namespace std {
+
+
+/* *************************************************** */
+/* Specializes the std::swap algorithm for ft::vector. */
+/* Swaps the contents of x and y. Calls x.swap(y).     */
+/* *************************************************** */
 template<class T, class Allocator = std::allocator<T> >
 void	swap(ft::vector<T, Allocator>& x, ft::vector<T, Allocator>& y)
 { x.swap(y); }
