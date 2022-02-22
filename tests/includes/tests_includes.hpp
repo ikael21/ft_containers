@@ -71,14 +71,30 @@ void	run_constructor_test(void);
 void	run_pop_back_test(void);
 void	run_push_back_test(void);
 void	run_resize_test(void);
+void	run_swap_test(void);
 
 
 /* ************************* */
 /*         UTILITY           */
 /* ************************* */
 
+typedef steady_clock::time_point	t_time;
 
-//size_t	measure_time(void (*)(void));
+/* ******************************** */
+/* returns the execution time of    */
+/* the given pointer to a function  */
+/* in microseconds                  */
+/* ******************************** */
+template<class Function>
+size_t	measure_time(Function* f) {
+
+	t_time	start, end;
+
+	start = high_resolution_clock::now();
+	f();
+	end = high_resolution_clock::now();
+	return (duration_cast<microseconds>(end - start).count());
+}
 
 
 /* ******************************************************** */
