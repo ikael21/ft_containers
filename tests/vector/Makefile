@@ -1,9 +1,9 @@
 NAME =	vector_test
 
-SRCS =	srcs/constructors_test.cpp	srcs/utils/measure_time.cpp\
-		srcs/assign_test.cpp		srcs/pop_back_test.cpp\
+SRCS =	srcs/constructors_test.cpp	srcs/assign_test.cpp\
+		srcs/pop_back_test.cpp		srcs/resize_test.cpp\
 		srcs/push_back_test.cpp		srcs/iterator_test.cpp\
-		srcs/insert_test.cpp		srcs/resize_test.cpp
+		srcs/insert_test.cpp		srcs/swap_test.cpp
 
 MAIN =	main.cpp
 
@@ -49,6 +49,7 @@ include $(wildcard $(D_FILES))
 
 clean:
 	@rm -rf $(OBJS_DIR)
+	@rm -rf $(NAME).dSYM
 	@echo "$(YELLOW)$(OBJS_DIR) dir. $(RED)deleted$(RESET)"
 
 fclean: clean
