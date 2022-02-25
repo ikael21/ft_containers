@@ -30,7 +30,9 @@ public:
 	typedef typename ft::reverse_iterator<const_iterator>		const_reverse_iterator;
 */
 
-	explicit vector(const allocator_type& alloc = allocator_type())
+	explicit vector(
+		const allocator_type& alloc = allocator_type()
+	)
 	: _alloc(alloc), _start(NULL), _size(0), _capacity(0) {}
 
 
@@ -102,7 +104,7 @@ public:
 	typename ft::enable_if<!ft::is_integral<InputIt>::value, void>::type
 	assign(InputIt __first, InputIt __last) {
 
-		size_type new_cap = __last - __first;
+		size_type new_cap = ft::distance(__first, __last);
 		size_type i = 0;
 
 		reserve(new_cap);
@@ -200,15 +202,21 @@ public:
 		_size = 0;
 	}
 
+	template<class InputIt>
+	typename ft::enable_if<!ft::is_integral<InputIt>::value, void>::type
+	insert(iterator pos, InputIt first, InputIt last) {
+
+	}
+
 	iterator	insert(iterator pos, const_reference value) {
 
 		size_type index = pos - begin();
 
 		if (_size == _capacity)
-			(!_capacity) ? reserve(1) : reserve(_capacity * 2);
+			reserve(recommend_size(_size + 1));
 
 		_alloc.construct(_start + _size, _start[_size - 1]);
-		size_type i = _size - 1;
+		size_type i = _size;
 		for (; i > index; --i)
 			_start[i] = _start[i - 1];
 
@@ -217,37 +225,25 @@ public:
 		return iterator(begin() + index);
 	}
 
-	void	insert(iterator pos, size_type count,
-					const_reference value) {
-		if (!count)
-			return;
+	void	insert(
+				iterator pos,
+				size_type count,
+				const_reference value) {
 
-		size_type index = pos - begin();
-		size_type new_size = _size + count;
+		if (count > 0) {
 
-		if (count >= _capacity)
-			reserve(new_size);
-		else if (new_size > _capacity) {
-			size_type new_cap = (!_capacity) ? 1 : _capacity;
-			while (new_cap < new_size)
-				new_cap *= 2;
-			reserve(new_cap);
+			if (_capacity + count > max_size())
+				throw std::length_error("vector::insert (fill)");
+
+			size_type new_size = _size + count;
+			value = value_type();
+			++pos;
 		}
-
-		for (size_type i = _size - 1; i >= index; --i)
-			_alloc.construct(_start + i + count, _start[i]);
-
-		for (size_type i = 0; i < count; ++i)
-			_alloc.construct(_start + i + index, value);
-
-//		could change to code below instead of for() loop above
-//		std::uninitialized_fill(_start + index, _start + count, value);
-		_size = new_size;
 	}
 
 	void	push_back(const_reference value) {
 		if (_size == _capacity)
-			(!_capacity) ? reserve(1) : reserve(_capacity * 2);
+			reserve(recommend_size(_size + 1));
 		_alloc.construct(_start + _size, value);
 		_size++;
 	}
@@ -285,6 +281,22 @@ public:
 
 private:
 
+	/* ************************* */
+	/* if new_s > _capacity      */
+	/* ************************* */
+	size_type	recommend_size(size_type new_s) {
+
+		const size_type max_s = this->max_size();
+		if (new_s > max_s)
+			throw std::length_error("vector");
+		if (_capacity >= max_s / 2)
+			return max_s;
+
+		const size_type new_cap = _capacity * 2;
+		return (new_cap > new_s) ? new_cap : new_s;
+	}
+
+
 	allocator_type	_alloc;
 	pointer			_start;
 	size_type		_size;
@@ -302,7 +314,7 @@ namespace std {
 /* Specializes the std::swap algorithm for ft::vector. */
 /* Swaps the contents of x and y. Calls x.swap(y).     */
 /* *************************************************** */
-template<class T, class Allocator = std::allocator<T> >
+template<class T, class Allocator>
 void	swap(ft::vector<T, Allocator>& x, ft::vector<T, Allocator>& y)
 { x.swap(y); }
 
