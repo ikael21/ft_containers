@@ -34,6 +34,4 @@
 # Other unnecessary stuff
 .vscode
 ft_containers-unit-test
-diff_assign_speed_test.cpp
-test.cpp
-rchallie_containers
+tests/*/*.dSYM

@@ -1,6 +1,7 @@
 #ifndef ITERATOR_H
 # define ITERATOR_H
 # include <cstddef>
+# include <iterator>
 
 namespace ft {
 
@@ -60,6 +61,69 @@ struct iterator_traits<const T*> {
 	typedef ft::random_access_iterator_tag	iterator_category;
 
 };
+
+/* ************************* */
+/* for do_distance function  */
+/* ************************* */
+namespace detail {
+
+
+/* ****************************************************** */
+/* if Iter meets the requirements of InputIterator        */
+/* ****************************************************** */
+template<class Iter>
+typename ft::iterator_traits<Iter>::difference_type
+do_distance(Iter first, Iter last, ft::input_iterator_tag) {
+
+	typename ft::iterator_traits<Iter>::difference_type diff = 0;
+	while (first != last) {
+		++first;
+		++diff;
+	}
+	return diff;
+}
+
+template<class Iter>
+typename ft::iterator_traits<Iter>::difference_type
+do_distance(Iter first, Iter last, std::input_iterator_tag) {
+
+	typename ft::iterator_traits<Iter>::difference_type diff = 0;
+	while (first != last) {
+		++first;
+		++diff;
+	}
+	return diff;
+}
+
+
+/* ****************************************************** */
+/* if Iter meets the requirements of RandomAccessIterator */
+/* ****************************************************** */
+template<class Iter>
+typename ft::iterator_traits<Iter>::difference_type
+do_distance(Iter first, Iter last, ft::random_access_iterator_tag) {
+	return last - first;
+}
+
+template<class Iter>
+typename ft::iterator_traits<Iter>::difference_type
+do_distance(Iter first, Iter last, std::random_access_iterator_tag) {
+	return last - first;
+}
+
+
+}
+
+
+/* ************************* */
+/* THE SAME AS STD::DISTANCE */
+/* ************************* */
+template<class Iter>
+typename ft::iterator_traits<Iter>::difference_type
+distance(Iter first, Iter last) {
+	return ft::detail::do_distance(first, last,
+		typename ft::iterator_traits<Iter>::iterator_category());
+}
 
 
 /* ************************* */
