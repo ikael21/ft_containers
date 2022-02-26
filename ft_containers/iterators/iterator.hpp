@@ -126,22 +126,6 @@ distance(Iter first, Iter last) {
 }
 
 
-/* ************************* */
-/*    BASE ITERATOR CLASS    */
-/* ************************* */
-template<class Category, class T, class Distance = std::ptrdiff_t,
-		class Pointer = T*, class Reference = T&>
-struct iterator {
-
-	typedef Category	iterator_category;
-	typedef T			value_type;
-	typedef Distance	difference_type;
-	typedef Pointer		pointer;
-	typedef Reference	reference;
-
-};
-
-
 template<class T>
 class RandomAccessIterator {
 
@@ -234,11 +218,84 @@ inline RandomAccessIterator<T>	operator+(
 { return RandomAccessIterator<T>(iter + n); }
 
 
+template<class Iterator>
+class reverse_iterator {
+
+public:
+
+	typedef Iterator													iterator_type;
+	typedef	typename ft::iterator_traits<Iterator>::iterator_category	iterator_category;
+	typedef	typename ft::iterator_traits<Iterator>::value_type			value_type;
+	typedef	typename ft::iterator_traits<Iterator>::difference_type		difference_type;
+	typedef	typename ft::iterator_traits<Iterator>::pointer				pointer;
+	typedef	typename ft::iterator_traits<Iterator>::reference			reference;
+
+
+	reverse_iterator()
+	: _iter() {}
+
+	explicit reverse_iterator(iterator_type it)
+	: _iter(it) {}
+
+	template<class U>
+	reverse_iterator(const reverse_iterator<U>& rev_it)
+	: _iter(rev_it.base()) {}
+
+	reference			operator*() const {
+		iterator_type tmp = _iter;
+		return (*(--tmp));
+	}
+
+	reverse_iterator	operator+(difference_type n) const { return reverse_iterator(_iter - n); }
+	reverse_iterator&	operator+=(difference_type n) { _iter -= n; return *this; }
+	reverse_iterator&	operator++() { --_iter; return *this; }
+	reverse_iterator	operator++(int) {
+		reverse_iterator it(*this);
+		--_iter;
+		return it;
+	}
+
+
+	reverse_iterator	operator-(difference_type n) const { return reverse_iterator(_iter + n); }
+	reverse_iterator&	operator-=(difference_type n) { _iter += n; return *this; }
+	reverse_iterator&	operator--() { ++_iter; return *this; }
+	reverse_iterator	operator--(int) {
+		reverse_iterator it(*this);
+		++_iter;
+		return it;
+	}
+
+	pointer				operator->() const { return &(this->operator*()); }
+	reference			operator[](difference_type n) const { return _iter[n]; }
+	iterator_type		base() const { return _iter; }
+
+private:
+
+	Iterator	_iter;
+
+};
+
+
+/* ********************************************** */
+/* Non-member reverse_iterator function overloads */
+/* ********************************************** */
+template <class Iterator>
+reverse_iterator<Iterator> operator+(
+			typename reverse_iterator<Iterator>::difference_type n,
+			const reverse_iterator<Iterator>& rev_it)
+{ return rev_it + n; }
+
+template <class Iterator>
+typename reverse_iterator<Iterator>::difference_type operator-(
+			const reverse_iterator<Iterator>& lhs,
+			const reverse_iterator<Iterator>& rhs)
+{ return lhs.base() - rhs.base(); }
+
+
 /* *********************************************************************** */
 /* template comparison operators for compatibility with std. iterators or  */
 /* iterators of different type (Bedirectional, Forward, ...)               */
 /* *********************************************************************** */
-
 template<typename _LeftIterator, typename _RightIterator>
 inline bool	operator==(const _LeftIterator& lhs, const _RightIterator& rhs)
 { return (lhs.base() == rhs.base()); }
