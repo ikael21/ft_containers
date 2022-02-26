@@ -25,10 +25,9 @@ public:
 	typedef typename allocator_type::const_pointer				const_pointer;
 	typedef typename ft::RandomAccessIterator<value_type>		iterator;
 	typedef typename ft::RandomAccessIterator<const value_type>	const_iterator;
-/*
 	typedef typename ft::reverse_iterator<iterator>				reverse_iterator;
 	typedef typename ft::reverse_iterator<const_iterator>		const_reverse_iterator;
-*/
+
 
 	explicit vector(
 		const allocator_type& alloc = allocator_type()
@@ -60,20 +59,20 @@ public:
 		const allocator_type& alloc = allocator_type()
 	)
 	: _alloc(alloc), _start(NULL), _size(0), _capacity(0)
-	{ assign(__first, __last); }
+	{ this->assign(__first, __last); }
 
 
 	vector(const vector& o)
 	: _alloc(o.get_allocator()), _start(NULL), _size(0), _capacity(0)
-	{ assign(o.begin(), o.end()); }
+	{ this->assign(o.begin(), o.end()); }
 
 
-	~vector() { clear(); _alloc.deallocate(_start, _capacity); }
+	~vector() { this->clear(); _alloc.deallocate(_start, _capacity); }
 
 
 	vector&	operator=(const vector& other) {
 		if (this != &other)
-			assign(other.begin(), other.end());
+			this->assign(other.begin(), other.end());
 		return *this;
 	}
 
@@ -107,7 +106,7 @@ public:
 		size_type new_cap = ft::distance(__first, __last);
 		size_type i = 0;
 
-		reserve(new_cap);
+		this->reserve(new_cap);
 		while (i < _size and __first != __last) {
 			_start[i] = *__first;
 			++i; ++__first;
@@ -153,11 +152,17 @@ public:
 	/* ***************************** */
 	/*         ITERATORS             */
 	/* ***************************** */
-	iterator		begin(void) { return iterator(_start); }
-	const_iterator	begin(void) const { return const_iterator(_start); }
+	iterator				begin(void) { return iterator(_start); }
+	const_iterator			begin(void) const { return const_iterator(_start); }
 
-	iterator		end(void) { return iterator(_start + _size); }
-	const_iterator	end(void) const { return const_iterator(_start + _size); }
+	reverse_iterator		rbegin() { return reverse_iterator(iterator(_start + _size - 1)); }
+	const_reverse_iterator	rbegin() const { return const_reverse_iterator(iterator(_start + _size - 1)); }
+
+	iterator				end(void) { return iterator(_start + _size); }
+	const_iterator			end(void) const { return const_iterator(_start + _size); }
+
+	reverse_iterator 		rend() { return reverse_iterator(iterator(_start)); }
+	const_reverse_iterator	rend() const { return const_reverse_iterator(iterator(_start)); }
 
 
 	/* ***************************** */
@@ -169,7 +174,7 @@ public:
 
 	void	reserve(size_type new_cap) {
 
-		if (new_cap > max_size())
+		if (new_cap > this->max_size())
 			throw std::length_error("vector::reserve");
 
 		if (new_cap > _capacity) {
@@ -202,18 +207,125 @@ public:
 		_size = 0;
 	}
 
+	iterator	erase(iterator pos) {
+
+		const size_type index = static_cast<size_type>(pos - this->begin());
+
+		size_type i = index;
+		for (; i < _size - 1; ++i)
+			_start[i] = _start[i + 1];
+
+		_alloc.destroy(_start + i);
+		--_size;
+
+		return iterator(_start + index);
+	}
+
+	iterator	erase(iterator first, iterator last) {
+
+		const size_type index = static_cast<size_type>(first - this->begin());
+		const size_type count = static_cast<size_type>(last - first);
+
+		size_type i = index;
+		for (; i < _size - count; ++i)
+			_start[i] = _start[i + count];
+
+		for (; i < _size; ++i)
+			_alloc.destroy(_start + i);
+
+		_size -= count;
+		return iterator(_start + index);
+	}
+
 	template<class InputIt>
 	typename ft::enable_if<!ft::is_integral<InputIt>::value, void>::type
 	insert(iterator pos, InputIt first, InputIt last) {
 
+		const size_type count = static_cast<size_type>(last - first);
+		if (count > 0) {
+
+			const size_type new_size = _size + count;
+			if (new_size <= _capacity) {
+
+				iterator current = this->end();
+				try {
+					for (; current != pos - 1 && current + count >= this->end(); ++current)
+						_alloc.construct(&(*(current + count)), *current);
+				}
+				catch (...) {
+					for (iterator it = this->end(); it != current; --it)
+						_alloc.destroy(&(*(it + count)));
+					throw;
+				}
+				for (; current != pos - 1; --current)
+					*(current + count) = *current;
+
+				const size_type n = static_cast<size_type>(pos - this->begin());
+				size_type i = 0;
+				for (; first != last && i + n < this->size(); ++i, ++first)
+					_start[i + n] = *first;
+
+				size_type ex = i;
+				try {
+					for (; first != last; ++i, ++first)
+						_alloc.construct(_start + i + n, *first);
+				}
+				catch (...) {
+					for (; ex < i; ++ex)
+						_alloc.destroy(_start + ex + n);
+					throw;
+				}
+
+				_size = new_size;
+
+			}
+			else {
+				const size_type new_cap = this->__recommend_size(new_size);
+				pointer tmp = _alloc.allocate(new_cap);
+
+				try
+				{ ft::uninitialized_copy_a(this->begin(), pos, tmp, _alloc); }
+				catch (...)
+				{ _alloc.deallocate(tmp, new_cap); throw; }
+
+				const size_type _n = static_cast<size_type>(pos - this->begin());
+				try
+				{ ft::uninitialized_copy_a(first, last, tmp + _n, _alloc); }
+				catch(...) {
+					for (size_type i = 0; i < _n; ++i)
+						_alloc.destroy(tmp + i);
+					_alloc.deallocate(tmp, new_cap);
+					throw;
+				}
+
+				try {
+					ft::uninitialized_copy_a(pos, this->end(),
+						tmp + _n + count, _alloc);
+				}
+				catch (...) {
+					for (size_type i = 0; i < _n + count; ++i)
+						_alloc.destroy(tmp + i);
+					_alloc.deallocate(tmp, new_cap);
+					throw;
+				}
+
+				for (size_type i = 0; i < _size; ++i)
+					_alloc.destroy(_start + i);
+				_alloc.deallocate(_start, _capacity);
+
+				_start = tmp;
+				_size = new_size;
+				_capacity = new_cap;
+			}
+		}
 	}
 
 	iterator	insert(iterator pos, const_reference value) {
 
-		size_type index = pos - begin();
+		size_type index = pos - this->begin();
 
 		if (_size == _capacity)
-			reserve(recommend_size(_size + 1));
+			this->reserve(this->__recommend_size(_size + 1));
 
 		_alloc.construct(_start + _size, _start[_size - 1]);
 		size_type i = _size;
@@ -225,25 +337,89 @@ public:
 		return iterator(begin() + index);
 	}
 
-	void	insert(
-				iterator pos,
-				size_type count,
-				const_reference value) {
+	void	insert(iterator pos, size_type count, const_reference value) {
 
 		if (count > 0) {
 
-			if (_capacity + count > max_size())
-				throw std::length_error("vector::insert (fill)");
+			const size_type new_size = _size + count;
+			if (new_size <= _capacity) {
 
-			size_type new_size = _size + count;
-			value = value_type();
-			++pos;
+				iterator current = this->end();
+				try {
+					for (; current != pos - 1 && current + count >= this->end(); ++current)
+						_alloc.construct(&(*(current + count)), *current);
+				}
+				catch (...) {
+					for (iterator it = this->end(); it != current; --it)
+						_alloc.destroy(&(*(it + count)));
+					throw;
+				}
+				for (; current != pos - 1; --current)
+					*(current + count) = *current;
+
+				const size_type n = static_cast<size_type>(pos - this->begin());
+				size_type i = 0;
+				for (; i < count && i + n < this->size(); ++i)
+					_start[i + n] = value;
+
+				size_type ex = i;
+				try {
+					for (; i < count; ++i)
+						_alloc.construct(_start + i + n, value);
+				}
+				catch (...) {
+					for (; ex < i; ++ex)
+						_alloc.destroy(_start + ex + n);
+					throw;
+				}
+
+				_size = new_size;
+
+			}
+			else {
+				const size_type new_cap = this->__recommend_size(new_size);
+				pointer tmp = _alloc.allocate(new_cap);
+
+				try
+				{ ft::uninitialized_copy_a(this->begin(), pos, tmp, _alloc); }
+				catch (...)
+				{ _alloc.deallocate(tmp, new_cap); throw; }
+
+				const size_type _n = static_cast<size_type>(pos - this->begin());
+				try
+				{ ft::uninitialized_fill_n_a(tmp + _n, count, value, _alloc); }
+				catch(...) {
+					for (size_type i = 0; i < _n; ++i)
+						_alloc.destroy(tmp + i);
+					_alloc.deallocate(tmp, new_cap);
+					throw;
+				}
+
+				try {
+					ft::uninitialized_copy_a(pos, this->end(),
+						tmp + _n + count, _alloc);
+				}
+				catch (...) {
+					for (size_type i = 0; i < _n + count; ++i)
+						_alloc.destroy(tmp + i);
+					_alloc.deallocate(tmp, new_cap);
+					throw;
+				}
+
+				for (size_type i = 0; i < _size; ++i)
+					_alloc.destroy(_start + i);
+				_alloc.deallocate(_start, _capacity);
+
+				_start = tmp;
+				_size = new_size;
+				_capacity = new_cap;
+			}
 		}
 	}
 
 	void	push_back(const_reference value) {
 		if (_size == _capacity)
-			reserve(recommend_size(_size + 1));
+			this->reserve(this->__recommend_size(_size + 1));
 		_alloc.construct(_start + _size, value);
 		_size++;
 	}
@@ -256,17 +432,13 @@ public:
 
 		if (count < _size) {
 			while (count < _size)
-				pop_back();
+				this->pop_back();
 			return;
 		}
 
 		if (count > _size) {
-			if (_capacity < count) {
-				size_type new_cap = _capacity * 2;
-				if (new_cap < count)
-					new_cap = count;
-				reserve(new_cap);
-			}
+			if (_capacity < count)
+				this->reserve(this->__recommend_size(count));
 			for (; _size < count; ++_size)
 				_alloc.construct(_start + _size, value);
 		}
@@ -284,7 +456,7 @@ private:
 	/* ************************* */
 	/* if new_s > _capacity      */
 	/* ************************* */
-	size_type	recommend_size(size_type new_s) {
+	size_type	__recommend_size(size_type new_s) {
 
 		const size_type max_s = this->max_size();
 		if (new_s > max_s)
