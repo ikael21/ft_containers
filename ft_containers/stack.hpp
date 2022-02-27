@@ -1,13 +1,11 @@
 #ifndef STACK_H
 # define STACK_H
-# include <memory>
-
-// delete after implementing own vector
-# include <vector>
+# include "vector.hpp"
 
 namespace ft {
 
-template<class T, class Container = std::vector<T> >
+
+template<class T, class Container = ft::vector<T> >
 class stack {
 
 public:
@@ -19,13 +17,12 @@ public:
 	typedef typename container_type::const_reference	const_reference;
 
 	explicit stack(const container_type& c = container_type()) : _cont(c) {}
-	stack(const stack& other) { *this = other; }
+	stack(const stack& other) : _cont(other._cont) {}
 	~stack() {}
 
 	stack&	operator=(const stack& other) {
-		if (this == &other)
-			return *this;
-		_cont = other._cont;
+		if (this != &other)
+			_cont = other._cont;
 		return *this;
 	}
 
