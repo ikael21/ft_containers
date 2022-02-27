@@ -1,9 +1,10 @@
 #ifndef VECTOR_H
 # define VECTOR_H
-# include "memory/ft_uninitialized.hpp"
 # include <algorithm>
 # include <stdexcept>
+# include "memory/ft_uninitialized.hpp"
 # include "utility/type_traits.hpp"
+# include "utility/utility.hpp"
 # include "iterators/iterator.hpp"
 
 
@@ -103,7 +104,7 @@ public:
 	typename ft::enable_if<!ft::is_integral<InputIt>::value, void>::type
 	assign(InputIt __first, InputIt __last) {
 
-		size_type new_cap = ft::distance(__first, __last);
+		size_type new_cap = static_cast<size_type>(ft::distance(__first, __last));
 		size_type i = 0;
 
 		this->reserve(new_cap);
@@ -226,14 +227,14 @@ public:
 		const size_type index = static_cast<size_type>(first - this->begin());
 		const size_type count = static_cast<size_type>(last - first);
 
-		size_type i = index;
-		for (; i < _size - count; ++i)
-			_start[i] = _start[i + count];
-
-		for (; i < _size; ++i)
-			_alloc.destroy(_start + i);
-
-		_size -= count;
+		if (count > 0) {
+			size_type i = index;
+			for (; i < _size - count; ++i)
+				_start[i] = _start[i + count];
+			for (; i < _size; ++i)
+				_alloc.destroy(_start + i);
+			_size -= count;
+		}
 		return iterator(_start + index);
 	}
 
@@ -322,7 +323,7 @@ public:
 
 	iterator	insert(iterator pos, const_reference value) {
 
-		size_type index = pos - this->begin();
+		size_type index = static_cast<size_type>(pos - this->begin());
 
 		if (_size == _capacity)
 			this->reserve(this->__recommend_size(_size + 1));
@@ -477,18 +478,48 @@ private:
 };
 
 
+template<class T, class Alloc>
+bool	operator==(const ft::vector<T,Alloc>& lhs, const ft::vector<T,Alloc>& rhs)
+{ return (lhs.size() == rhs.size() && ft::equal(lhs.begin(), lhs.end(), rhs.begin())); }
+
+
+/* ***************************** */
+/* relational operators (vector) */
+/* ***************************** */
+template <class T, class Alloc>
+inline bool	operator!=(const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
+{ return !(lhs == rhs); }
+
+template<class T, class Alloc>
+inline bool	operator<(const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
+{ return ft::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()); }
+
+template<class T, class Alloc>
+inline bool	operator<=(const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
+{ return !(rhs < lhs); }
+
+template<class T, class Alloc>
+inline bool	operator>(const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
+{ return rhs < lhs; }
+
+template<class T, class Alloc>
+inline bool	operator>=(const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
+{ return !(lhs < rhs); }
+
+
 }
+
 
 namespace std {
 
 
-/* *************************************************** */
-/* Specializes the std::swap algorithm for ft::vector. */
-/* Swaps the contents of x and y. Calls x.swap(y).     */
-/* *************************************************** */
+/* ******************************************************* */
+/* Specializes the std::swap algorithm for ft::vector.     */
+/* Swaps the contents of lhs and rhs. Calls lhs.swap(rhs). */
+/* ******************************************************* */
 template<class T, class Allocator>
-void	swap(ft::vector<T, Allocator>& x, ft::vector<T, Allocator>& y)
-{ x.swap(y); }
+void	swap(ft::vector<T, Allocator>& lhs, ft::vector<T, Allocator>& rhs)
+{ lhs.swap(rhs); }
 
 
 }
