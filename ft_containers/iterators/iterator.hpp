@@ -1,6 +1,10 @@
 #ifndef ITERATOR_H
 # define ITERATOR_H
 # include <cstddef>
+
+/* ************************************* */
+/* for having stl iterator category tags */
+/* ************************************* */
 # include <iterator>
 
 namespace ft {
@@ -14,6 +18,24 @@ struct output_iterator_tag {};
 struct forward_iterator_tag : public input_iterator_tag {};
 struct bidirectional_iterator_tag : public forward_iterator_tag {};
 struct random_access_iterator_tag : public bidirectional_iterator_tag {};
+
+
+/* ************************* */
+/*    BASE ITERATOR STRUCT   */
+/* ************************* */
+template<class Category, class T, class Distance = std::ptrdiff_t,
+	class Pointer = T*, class Reference = T&>
+class iterator {
+
+public:
+
+	typedef T			value_type;
+	typedef Distance	difference_type;
+	typedef Pointer		pointer;
+	typedef Reference	reference;
+	typedef Category	iterator_category;
+
+};
 
 
 /* *************************** */
@@ -101,15 +123,13 @@ do_distance(Iter first, Iter last, std::input_iterator_tag) {
 /* ****************************************************** */
 template<class Iter>
 typename ft::iterator_traits<Iter>::difference_type
-do_distance(Iter first, Iter last, ft::random_access_iterator_tag) {
-	return last - first;
-}
+do_distance(Iter first, Iter last, ft::random_access_iterator_tag)
+{ return last - first; }
 
 template<class Iter>
 typename ft::iterator_traits<Iter>::difference_type
-do_distance(Iter first, Iter last, std::random_access_iterator_tag) {
-	return last - first;
-}
+do_distance(Iter first, Iter last, std::random_access_iterator_tag)
+{ return last - first; }
 
 
 }
@@ -127,18 +147,19 @@ distance(Iter first, Iter last) {
 
 
 template<class T>
-class RandomAccessIterator {
+class RandomAccessIterator
+: public ft::iterator<ft::random_access_iterator_tag, T> {
 
 public:
 
 	/* ************************* */
 	/*     ITERATOR TYPES        */
 	/* ************************* */
-	typedef	typename ft::iterator_traits<T*>::iterator_category	iterator_category;
-	typedef	typename ft::iterator_traits<T*>::value_type		value_type;
-	typedef	typename ft::iterator_traits<T*>::difference_type	difference_type;
-	typedef	typename ft::iterator_traits<T*>::pointer			pointer;
-	typedef	typename ft::iterator_traits<T*>::reference			reference;
+	typedef	typename ft::iterator<ft::random_access_iterator_tag, T>::iterator_category	iterator_category;
+	typedef	typename ft::iterator<ft::random_access_iterator_tag, T>::value_type		value_type;
+	typedef	typename ft::iterator<ft::random_access_iterator_tag, T>::difference_type	difference_type;
+	typedef	typename ft::iterator<ft::random_access_iterator_tag, T>::pointer			pointer;
+	typedef	typename ft::iterator<ft::random_access_iterator_tag, T>::reference			reference;
 
 
 	explicit RandomAccessIterator(pointer const ptr = NULL)
@@ -152,7 +173,8 @@ public:
 	/*   ASSIGNMENT OPERATORS    */
 	/* ************************* */
 	RandomAccessIterator&	operator=(const RandomAccessIterator& other) {
-		_ptr = other._ptr;
+		if (this != &other)
+			_ptr = other._ptr;
 		return *this;
 	}
 
@@ -195,6 +217,7 @@ public:
 	}
 
 
+
 	/* ************************* */
 	/*  MEMBER ACCESS OPERATORS  */
 	/* ************************* */
@@ -203,6 +226,8 @@ public:
 	pointer		operator->(void) const { return _ptr; }
 	pointer		base(void) const { return _ptr; }
 
+	operator RandomAccessIterator<const T>() const
+	{ return (RandomAccessIterator<const T>(_ptr)); }
 
 private:
 
@@ -218,6 +243,10 @@ inline RandomAccessIterator<T>	operator+(
 { return RandomAccessIterator<T>(iter + n); }
 
 
+/* ******************************************************************** */
+/* An iterator adaptor that reverses the direction of a given iterator, */
+/* which must be at least a LegacyBidirectionalIterator                 */
+/* ******************************************************************** */
 template<class Iterator>
 class reverse_iterator {
 
@@ -323,4 +352,4 @@ inline bool	operator<(const _LeftIterator& lhs, const _RightIterator& rhs)
 
 }
 
-#endif
+#endif // ITERATOR_H
