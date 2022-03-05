@@ -5,6 +5,7 @@
 # include <utility>
 # include "utility/type_traits.hpp"
 # include "utility/utility.hpp"
+# include "utility/red_black_tree.hpp"
 
 namespace ft {
 
@@ -38,6 +39,10 @@ public:
 /*
 	size_type
 */
+
+private:
+
+	typedef typename allocator_type::rebind<ft::node<value_type>>::other	_alloc_node_type;
 
 };
 

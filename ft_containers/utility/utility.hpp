@@ -4,10 +4,10 @@
 namespace ft {
 
 
-/* ******************************************* */
-/* class template that provides a way to store */
-/* two heterogeneous objects as a single unit. */
-/* ******************************************* */
+/**
+ * Class template that provides a way to store
+ * two heterogeneous objects as a single unit
+**/
 template<class T1, class T2>
 struct pair {
 
@@ -38,9 +38,9 @@ struct pair {
 };
 
 
-/* ********************************************* */
-/* relational operators overloading for ft::pair */
-/* ********************************************* */
+/**
+ * Relational operators overloading for ft::pair
+**/
 template<class T1, class T2>
 bool	operator==(const std::pair<T1,T2>& lhs, const std::pair<T1,T2>& rhs)
 { return (lhs.first == rhs.first && lhs.second == rhs.second); }
@@ -66,10 +66,10 @@ bool	operator>=(const std::pair<T1,T2>& lhs, const std::pair<T1,T2>& rhs)
 { return !(lhs < rhs); }
 
 
-/* **************************************** */
-/* Creates ft::pair object, deducing the    */
-/* target type from the types of arguments. */
-/* **************************************** */
+/**
+ * Creates ft::pair object, deducing the
+ * target type from the types of arguments
+**/
 template<class T1, class T2>
 ft::pair<T1, T2>	make_pair(T1 a, T2 b)
 { return ft::pair<T1, T2>(a, b); }

@@ -5,26 +5,27 @@
 namespace ft {
 
 
-/* ******************************************* */
-/* a template struct to conditionally remove   */
-/* functions from the candidate set based      */
-/* on type traits                              */
-/* ******************************************* */
+/**
+ * A template struct to conditionally remove
+ * functions from the candidate set based on
+ * type traits
+**/
 template<bool B, class T = void>
 struct enable_if {};
 
 
-/* **************************************************** */
-/* Specialization to add functions to the candidate set */
-/* **************************************************** */
+/**
+ * Specialization to add functions
+ * to the candidate set
+**/
 template<class T>
 struct enable_if<true, T> { typedef T type; };
 
 
-/* ***************************************** */
-/* Base class for is_integral struct         */
-/* wraps a static constant of specified type */
-/* ***************************************** */
+/**
+ * Base struct for is_integral struct,
+ * wraps a static constant of specified type
+**/
 template<class T, T v>
 struct integral_constant {
 
@@ -36,23 +37,23 @@ struct integral_constant {
 };
 
 
-/* ****************************************** */
-/* Bool variants of integral_constant struct  */
-/* ****************************************** */
+/**
+ * Bool variants of integral_constant struct
+**/
 typedef ft::integral_constant<bool, true>	true_type;
 typedef ft::integral_constant<bool, false>	false_type;
 
 
-/* ************************************ */
-/* struct to check if T - integral type */
-/* ************************************ */
+/**
+ * Struct to check if T - integral type
+**/
 template<class T>
 struct is_integral : public ft::false_type {};
 
 
-/* ************************************************* */
-/* Specializations of all fundamental integral types */
-/* ************************************************* */
+/**
+ * Specializations of all fundamental integral types
+**/
 template<> struct is_integral<bool> : public ft::true_type {};
 template<> struct is_integral<char> : public ft::true_type {};
 template<> struct is_integral<unsigned char> : public ft::true_type {};

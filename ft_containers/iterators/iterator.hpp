@@ -2,17 +2,15 @@
 # define ITERATOR_H
 # include <cstddef>
 
-/* ************************************* */
-/* for having stl iterator category tags */
-/* ************************************* */
+// for having stl iterator category tags
 # include <iterator>
 
 namespace ft {
 
 
-/* ************************* */
-/*   CATEGORIES OF ITERATOR  */
-/* ************************* */
+/**
+ * Iterator categories
+**/
 struct input_iterator_tag {};
 struct output_iterator_tag {};
 struct forward_iterator_tag : public input_iterator_tag {};
@@ -20,9 +18,9 @@ struct bidirectional_iterator_tag : public forward_iterator_tag {};
 struct random_access_iterator_tag : public bidirectional_iterator_tag {};
 
 
-/* ************************* */
-/*    BASE ITERATOR STRUCT   */
-/* ************************* */
+/**
+ * Base iterator class
+**/
 template<class Category, class T, class Distance = std::ptrdiff_t,
 	class Pointer = T*, class Reference = T&>
 class iterator {
@@ -38,10 +36,10 @@ public:
 };
 
 
-/* *************************** */
-/* INTERFACE TO THE PROPERTIES */
-/* OF ITERATOR TYPES           */
-/* *************************** */
+/**
+ * Interface to the properties
+ * of iterator types
+**/
 template<class Iterator>
 struct iterator_traits {
 
@@ -54,9 +52,9 @@ struct iterator_traits {
 };
 
 
-/* ****************************** */
-/* T* specialization member types */
-/* ****************************** */
+/**
+ * T* specialization member types
+**/
 template<class T>
 struct iterator_traits<T*> {
 
@@ -69,10 +67,9 @@ struct iterator_traits<T*> {
 };
 
 
-/* ************************* */
-/* const T* specialization   */
-/* member types              */
-/* ************************* */
+/**
+ * const T* specialization member types
+**/
 template<class T>
 struct iterator_traits<const T*> {
 
@@ -84,15 +81,14 @@ struct iterator_traits<const T*> {
 
 };
 
-/* ************************* */
-/* for do_distance function  */
-/* ************************* */
+
+// for do_distance function
 namespace detail {
 
 
-/* ****************************************************** */
-/* if Iter meets the requirements of InputIterator        */
-/* ****************************************************** */
+/**
+ * if Iter meets the requirements of InputIterator
+**/
 template<class Iter>
 typename ft::iterator_traits<Iter>::difference_type
 do_distance(Iter first, Iter last, ft::input_iterator_tag) {
@@ -105,6 +101,11 @@ do_distance(Iter first, Iter last, ft::input_iterator_tag) {
 	return diff;
 }
 
+
+/**
+ * if Iter meets the requirements of InputIterator
+ * but with std tag
+**/
 template<class Iter>
 typename ft::iterator_traits<Iter>::difference_type
 do_distance(Iter first, Iter last, std::input_iterator_tag) {
@@ -118,14 +119,18 @@ do_distance(Iter first, Iter last, std::input_iterator_tag) {
 }
 
 
-/* ****************************************************** */
-/* if Iter meets the requirements of RandomAccessIterator */
-/* ****************************************************** */
+/**
+ * if Iter meets the requirements of RandomAccessIterator
+**/
 template<class Iter>
 typename ft::iterator_traits<Iter>::difference_type
 do_distance(Iter first, Iter last, ft::random_access_iterator_tag)
 { return last - first; }
 
+/**
+ * if Iter meets the requirements of RandomAccessIterator
+ * but with std tag
+**/
 template<class Iter>
 typename ft::iterator_traits<Iter>::difference_type
 do_distance(Iter first, Iter last, std::random_access_iterator_tag)
@@ -135,9 +140,13 @@ do_distance(Iter first, Iter last, std::random_access_iterator_tag)
 }
 
 
-/* ************************* */
-/* THE SAME AS STD::DISTANCE */
-/* ************************* */
+/**
+ * Calculates the number of elements between first and last,
+ * If it is a random-access iterator,
+ * the function uses operator- to calculate this.
+ * Otherwise, the function uses the increase
+ * operator (operator++) repeatedly.
+**/
 template<class Iter>
 typename ft::iterator_traits<Iter>::difference_type
 distance(Iter first, Iter last) {
@@ -152,9 +161,6 @@ class RandomAccessIterator
 
 public:
 
-	/* ************************* */
-	/*     ITERATOR TYPES        */
-	/* ************************* */
 	typedef	typename ft::iterator<ft::random_access_iterator_tag, T>::iterator_category	iterator_category;
 	typedef	typename ft::iterator<ft::random_access_iterator_tag, T>::value_type		value_type;
 	typedef	typename ft::iterator<ft::random_access_iterator_tag, T>::difference_type	difference_type;
@@ -243,10 +249,11 @@ inline RandomAccessIterator<T>	operator+(
 { return RandomAccessIterator<T>(iter + n); }
 
 
-/* ******************************************************************** */
-/* An iterator adaptor that reverses the direction of a given iterator, */
-/* which must be at least a LegacyBidirectionalIterator                 */
-/* ******************************************************************** */
+/**
+ * An iterator adaptor that reverses the direction of
+ * a given iterator, which must be at least
+ * a LegacyBidirectionalIterator
+**/
 template<class Iterator>
 class reverse_iterator {
 
@@ -305,9 +312,9 @@ private:
 };
 
 
-/* ********************************************** */
-/* Non-member reverse_iterator function overloads */
-/* ********************************************** */
+/**
+ * Non-member reverse_iterator function overloads
+**/
 template <class Iterator>
 reverse_iterator<Iterator> operator+(
 			typename reverse_iterator<Iterator>::difference_type n,
@@ -321,10 +328,10 @@ typename reverse_iterator<Iterator>::difference_type operator-(
 { return lhs.base() - rhs.base(); }
 
 
-/* *********************************************************************** */
-/* template comparison operators for compatibility with std. iterators or  */
-/* iterators of different type (Bedirectional, Forward, ...)               */
-/* *********************************************************************** */
+/**
+ * template comparison operators for compatibility with std. iterators or
+ * iterators of different type (Bedirectional, Forward, ...)
+**/
 template<typename _LeftIterator, typename _RightIterator>
 inline bool	operator==(const _LeftIterator& lhs, const _RightIterator& rhs)
 { return (lhs.base() == rhs.base()); }

@@ -57,6 +57,7 @@ protected:
 
 };
 
+
 template<class T, class Container>
 bool	operator==(const ft::stack<T, Container>& lhs, const ft::stack<T, Container>& rhs)
 { return (lhs._cont == rhs._cont); }

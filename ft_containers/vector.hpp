@@ -454,9 +454,9 @@ public:
 
 private:
 
-	/* ************************* */
-	/* if new_s > _capacity      */
-	/* ************************* */
+	/**
+	 * if new_s > _capacity
+	**/
 	size_type	__recommend_size(size_type new_s) {
 
 		const size_type max_s = this->max_size();
@@ -483,9 +483,9 @@ bool	operator==(const ft::vector<T,Alloc>& lhs, const ft::vector<T,Alloc>& rhs)
 { return (lhs.size() == rhs.size() && ft::equal(lhs.begin(), lhs.end(), rhs.begin())); }
 
 
-/* ***************************** */
-/* relational operators (vector) */
-/* ***************************** */
+/**
+ * Relational operators (vector)
+**/
 template <class T, class Alloc>
 inline bool	operator!=(const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
 { return !(lhs == rhs); }
@@ -513,10 +513,10 @@ inline bool	operator>=(const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
 namespace std {
 
 
-/* ******************************************************* */
-/* Specializes the std::swap algorithm for ft::vector.     */
-/* Swaps the contents of lhs and rhs. Calls lhs.swap(rhs). */
-/* ******************************************************* */
+/**
+ * Specializes the std::swap algorithm for ft::vector
+ * Swaps the contents of lhs and rhs. Calls lhs.swap(rhs)
+**/
 template<class T, class Allocator>
 void	swap(ft::vector<T, Allocator>& lhs, ft::vector<T, Allocator>& rhs)
 { lhs.swap(rhs); }
