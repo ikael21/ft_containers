@@ -1,39 +1,9 @@
 #ifndef ITERATOR_H
 # define ITERATOR_H
 # include <cstddef>
-
-// for having stl iterator category tags
 # include <iterator>
 
 namespace ft {
-
-
-/**
- * Iterator categories
-**/
-struct input_iterator_tag {};
-struct output_iterator_tag {};
-struct forward_iterator_tag : public input_iterator_tag {};
-struct bidirectional_iterator_tag : public forward_iterator_tag {};
-struct random_access_iterator_tag : public bidirectional_iterator_tag {};
-
-
-/**
- * Base iterator class
-**/
-template<class Category, class T, class Distance = std::ptrdiff_t,
-	class Pointer = T*, class Reference = T&>
-class iterator {
-
-public:
-
-	typedef T			value_type;
-	typedef Distance	difference_type;
-	typedef Pointer		pointer;
-	typedef Reference	reference;
-	typedef Category	iterator_category;
-
-};
 
 
 /**
@@ -62,7 +32,7 @@ struct iterator_traits<T*> {
 	typedef T								value_type;
 	typedef T*								pointer;
 	typedef T&								reference;
-	typedef ft::random_access_iterator_tag	iterator_category;
+	typedef std::random_access_iterator_tag	iterator_category;
 
 };
 
@@ -77,7 +47,7 @@ struct iterator_traits<const T*> {
 	typedef T								value_type;
 	typedef const T*						pointer;
 	typedef const T&						reference;
-	typedef ft::random_access_iterator_tag	iterator_category;
+	typedef std::random_access_iterator_tag	iterator_category;
 
 };
 
@@ -91,23 +61,6 @@ namespace detail {
 **/
 template<class Iter>
 typename ft::iterator_traits<Iter>::difference_type
-do_distance(Iter first, Iter last, ft::input_iterator_tag) {
-
-	typename ft::iterator_traits<Iter>::difference_type diff = 0;
-	while (first != last) {
-		++first;
-		++diff;
-	}
-	return diff;
-}
-
-
-/**
- * if Iter meets the requirements of InputIterator
- * but with std tag
-**/
-template<class Iter>
-typename ft::iterator_traits<Iter>::difference_type
 do_distance(Iter first, Iter last, std::input_iterator_tag) {
 
 	typename ft::iterator_traits<Iter>::difference_type diff = 0;
@@ -118,18 +71,8 @@ do_distance(Iter first, Iter last, std::input_iterator_tag) {
 	return diff;
 }
 
-
 /**
  * if Iter meets the requirements of RandomAccessIterator
-**/
-template<class Iter>
-typename ft::iterator_traits<Iter>::difference_type
-do_distance(Iter first, Iter last, ft::random_access_iterator_tag)
-{ return last - first; }
-
-/**
- * if Iter meets the requirements of RandomAccessIterator
- * but with std tag
 **/
 template<class Iter>
 typename ft::iterator_traits<Iter>::difference_type
@@ -157,15 +100,15 @@ distance(Iter first, Iter last) {
 
 template<class T>
 class RandomAccessIterator
-: public ft::iterator<ft::random_access_iterator_tag, T> {
+: public std::iterator<std::random_access_iterator_tag, T> {
 
 public:
 
-	typedef	typename ft::iterator<ft::random_access_iterator_tag, T>::iterator_category	iterator_category;
-	typedef	typename ft::iterator<ft::random_access_iterator_tag, T>::value_type		value_type;
-	typedef	typename ft::iterator<ft::random_access_iterator_tag, T>::difference_type	difference_type;
-	typedef	typename ft::iterator<ft::random_access_iterator_tag, T>::pointer			pointer;
-	typedef	typename ft::iterator<ft::random_access_iterator_tag, T>::reference			reference;
+	typedef	typename std::iterator<std::random_access_iterator_tag, T>::iterator_category	iterator_category;
+	typedef	typename std::iterator<std::random_access_iterator_tag, T>::value_type			value_type;
+	typedef	typename std::iterator<std::random_access_iterator_tag, T>::difference_type		difference_type;
+	typedef	typename std::iterator<std::random_access_iterator_tag, T>::pointer				pointer;
+	typedef	typename std::iterator<std::random_access_iterator_tag, T>::reference			reference;
 
 
 	explicit RandomAccessIterator(pointer const ptr = NULL)
@@ -174,10 +117,6 @@ public:
 	RandomAccessIterator(const RandomAccessIterator& other)
 	: _ptr(other._ptr) {}
 
-
-	/* ************************* */
-	/*   ASSIGNMENT OPERATORS    */
-	/* ************************* */
 	RandomAccessIterator&	operator=(const RandomAccessIterator& other) {
 		if (this != &other)
 			_ptr = other._ptr;
@@ -187,10 +126,6 @@ public:
 	RandomAccessIterator&	operator+=(difference_type n) { _ptr += n; return *this; }
 	RandomAccessIterator&	operator-=(difference_type n) { _ptr -= n; return *this; }
 
-
-	/* ******************************* */
-	/* INCREMENT / DECREMENT OPERATORS */
-	/* ******************************* */
 	RandomAccessIterator&	operator++(void) { ++_ptr; return *this; }
 	RandomAccessIterator&	operator--(void) { --_ptr; return *this; }
 
@@ -206,10 +141,6 @@ public:
 		return copy;
 	}
 
-
-	/* ************************* */
-	/*   ARITHMETIC OPERATORS    */
-	/* ************************* */
 	RandomAccessIterator	operator+(difference_type n) const {
 		return RandomAccessIterator(_ptr + n);
 	}
@@ -222,11 +153,6 @@ public:
 		return _ptr - other._ptr;
 	}
 
-
-
-	/* ************************* */
-	/*  MEMBER ACCESS OPERATORS  */
-	/* ************************* */
 	reference	operator*(void) { return *_ptr; };
 	reference	operator[](difference_type n) { return *(_ptr + n); }
 	pointer		operator->(void) const { return _ptr; }
@@ -307,7 +233,7 @@ public:
 
 private:
 
-	Iterator	_iter;
+	iterator_type	_iter;
 
 };
 

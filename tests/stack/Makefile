@@ -1,10 +1,6 @@
-NAME =	vector_test
+NAME =	stack_test
 
-SRCS =	srcs/constructors_test.cpp	srcs/assign_test.cpp\
-		srcs/pop_back_test.cpp		srcs/resize_test.cpp\
-		srcs/push_back_test.cpp		srcs/iterator_test.cpp\
-		srcs/insert_test.cpp		srcs/swap_test.cpp\
-		srcs/erase_test.cpp
+SRCS =	srcs/constructors_test.cpp
 
 MAIN =	main.cpp
 

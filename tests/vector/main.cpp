@@ -9,5 +9,5 @@ int	main(void) {
 	run_iterator_test();
 	run_insert_test();
 	run_resize_test();
-	run_swap_test();
+	run_erase_test();
 }

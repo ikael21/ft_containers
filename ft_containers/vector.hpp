@@ -1,11 +1,11 @@
 #ifndef VECTOR_H
 # define VECTOR_H
-# include <algorithm>
 # include <stdexcept>
-# include "memory/ft_uninitialized.hpp"
+# include <algorithm>
+# include "utility/uninitialized_memory.hpp"
 # include "utility/type_traits.hpp"
-# include "utility/utility.hpp"
-# include "iterators/iterator.hpp"
+# include "utility/algorithm.hpp"
+# include "utility/iterator.hpp"
 
 
 namespace ft {
@@ -86,14 +86,14 @@ public:
 			tmp.swap(*this);
 		}
 		else if (count > _size) {
-			std::fill(_start, _start + _size, value);
+			ft::fill(_start, _start + _size, value);
 			const size_type diff = count - _size;
 			ft::uninitialized_fill_n_a(_start + _size,
 				diff, value, _alloc);
 			_size += diff;
 		}
 		else {
-			std::fill_n(_start, count, value);
+			ft::fill_n(_start, count, value);
 			for (size_t i = count; i < _size; ++i)
 				_alloc.destroy(_start + i);
 			_size = count;
@@ -478,14 +478,13 @@ private:
 };
 
 
+/**
+ * Relational operators (vector)
+**/
 template<class T, class Alloc>
 bool	operator==(const ft::vector<T,Alloc>& lhs, const ft::vector<T,Alloc>& rhs)
 { return (lhs.size() == rhs.size() && ft::equal(lhs.begin(), lhs.end(), rhs.begin())); }
 
-
-/**
- * Relational operators (vector)
-**/
 template <class T, class Alloc>
 inline bool	operator!=(const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
 { return !(lhs == rhs); }
@@ -515,7 +514,7 @@ namespace std {
 
 /**
  * Specializes the std::swap algorithm for ft::vector
- * Swaps the contents of lhs and rhs. Calls lhs.swap(rhs)
+ * Swaps the contents of lhs and rhs.
 **/
 template<class T, class Allocator>
 void	swap(ft::vector<T, Allocator>& lhs, ft::vector<T, Allocator>& rhs)

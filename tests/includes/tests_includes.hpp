@@ -5,7 +5,9 @@
 # include <sstream>
 # include <vector>
 # include <chrono>
+# include <map>
 # include "vector.hpp"
+# include "stack.hpp"
 
 
 // for time measuring
@@ -72,6 +74,7 @@ void	run_pop_back_test(void);
 void	run_push_back_test(void);
 void	run_resize_test(void);
 void	run_swap_test(void);
+void	run_erase_test(void);
 
 
 /* ************************* */
