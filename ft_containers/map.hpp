@@ -62,7 +62,7 @@ public:
 
 private:
 
-	typedef typename allocator_type::rebind</* node type */>::other	_alloc_node_type;
+	typedef typename allocator_type::template rebind</* node type */>::other	_alloc_node_type;
 
 
 };

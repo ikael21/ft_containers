@@ -248,9 +248,9 @@ public:
 			const size_type new_size = _size + count;
 			if (new_size <= _capacity) {
 
-				iterator current = this->end();
+				iterator current = this->end() - 1;
 				try {
-					for (; current != pos - 1 && current + count >= this->end(); ++current)
+					for (; current != pos - 1 && current + count >= this->end(); --current)
 						_alloc.construct(&(*(current + count)), *current);
 				}
 				catch (...) {
