@@ -35,7 +35,7 @@ void	fill(ForwardIter first, ForwardIter last, const T& value) {
 
 template<class OutputIter, class Size, class T>
 void	fill_n(OutputIter first, Size count, const T& value) {
-	for (Size i = 0; i < count; ++i)
+	for (Size i = 0; i < count; ++i, ++first)
 		*first = value;
 }
 
