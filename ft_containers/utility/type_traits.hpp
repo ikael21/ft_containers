@@ -19,7 +19,11 @@ struct enable_if {};
  * to the candidate set
 **/
 template<class T>
-struct enable_if<true, T> { typedef T type; };
+struct enable_if<true, T> {
+
+  typedef T type;
+
+};
 
 
 /**
@@ -29,10 +33,12 @@ struct enable_if<true, T> { typedef T type; };
 template<class T, T v>
 struct integral_constant {
 
-	static const bool value = v;
-	typedef T value_type;
-	typedef integral_constant type;
-	operator value_type() const { return value; }
+  static const bool value = v;
+
+  typedef T                 value_type;
+  typedef integral_constant type;
+
+  operator value_type() const { return value; }
 
 };
 
@@ -40,8 +46,8 @@ struct integral_constant {
 /**
  * Bool variants of integral_constant struct
 **/
-typedef ft::integral_constant<bool, true>	true_type;
-typedef ft::integral_constant<bool, false>	false_type;
+typedef ft::integral_constant<bool, true>   true_type;
+typedef ft::integral_constant<bool, false>  false_type;
 
 
 /**
