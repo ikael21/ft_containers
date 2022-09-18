@@ -33,5 +33,5 @@
 
 # Other unnecessary stuff
 .vscode
-ft_containers-unit-test
-tests/*/*.dSYM
+tests/objs
+tests/ft_containers_test

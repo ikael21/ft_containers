@@ -42,11 +42,11 @@ public:
                   const value_type& value = value_type(),
                   const allocator_type& alloc = allocator_type())
   : _alloc(alloc), _start(NULL), _size(count), _capacity(count) {
-    if (count > 0) {
-      _start = _alloc.allocate(count);
-      try { ft::uninitialized_fill_a(_start, _start + count, value, _alloc); }
-      catch (...) { _alloc.deallocate(_start, count); throw; }
-    }
+    if (!count) return;
+
+    _start = _alloc.allocate(count);
+    try { ft::uninitialized_fill_a(_start, _start + count, value, _alloc); }
+    catch (...) { _alloc.deallocate(_start, count); throw; }
   }
 
 
@@ -175,21 +175,20 @@ public:
     if (new_cap > this->max_size())
       throw std::length_error("vector::reserve");
 
-    if (new_cap > _capacity) {
-      pointer tmp = _alloc.allocate(new_cap);
+    if (new_cap <= _capacity) return;
 
-      try
-      { ft::uninitialized_copy_a(this->begin(), this->end(), tmp, _alloc); }
-      catch (...)
-      { _alloc.deallocate(tmp, new_cap); throw; }
+    pointer tmp = _alloc.allocate(new_cap);
+    try
+    { ft::uninitialized_copy_a(this->begin(), this->end(), tmp, _alloc); }
+    catch (...)
+    { _alloc.deallocate(tmp, new_cap); throw; }
 
-      for (size_type i = 0; i < _size; ++i)
-        _alloc.destroy(_start + i);
-      _alloc.deallocate(_start, _capacity);
+    for (size_type i = 0; i < _size; ++i)
+      _alloc.destroy(_start + i);
+    _alloc.deallocate(_start, _capacity);
 
-      _start = tmp;
-      _capacity = new_cap;
-    }
+    _start = tmp;
+    _capacity = new_cap;
   }
 
   size_type capacity(void) const { return _capacity; }
@@ -402,6 +401,7 @@ public:
   void push_back(const_reference value) {
     if (_size == _capacity)
       this->reserve(this->__recommend_size(_size + 1));
+
     _alloc.construct(_start + _size, value);
     _size++;
   }
