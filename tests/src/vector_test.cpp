@@ -1,9 +1,8 @@
 #include "testing.hpp"
 
-
 TEST(Vector, default_constructor) {
-  std::vector<int> a;
-  ft::vector<int> b;
+  std::vector<std::string> a;
+  ft::vector<std::string> b;
 
   ASSERT_EQ(a.size(), b.size()) << "size";
   ASSERT_EQ(a.capacity(), b.capacity()) << "capacity";
@@ -13,8 +12,8 @@ TEST(Vector, default_constructor) {
 TEST(Vector, count_constructor_with_zero_size) {
   const size_t count = 0;
 
-  std::vector<int> a(count);
-  ft::vector<int> b(count);
+  std::vector<std::string> a(count);
+  ft::vector<std::string> b(count);
 
   ASSERT_EQ(a.size(), b.size()) << "size";
   ASSERT_EQ(a.capacity(), b.capacity()) << "capacity";
@@ -23,8 +22,8 @@ TEST(Vector, count_constructor_with_zero_size) {
 TEST(Vector, count_constructor_with_default_value) {
   const size_t count = 10;
 
-  std::vector<int> a(count);
-  ft::vector<int> b(count);
+  std::vector<std::string> a(count);
+  ft::vector<std::string> b(count);
 
   ASSERT_EQ(a.size(), b.size()) << "size";
   ASSERT_EQ(a.capacity(), b.capacity()) << "capacity";
@@ -35,10 +34,10 @@ TEST(Vector, count_constructor_with_default_value) {
 
 TEST(Vector, count_constructor_with_custom_value) {
   const size_t count = 10;
-  const int custom_value = 10000;
+  const std::string custom_value("custom_value");
 
-  std::vector<int> a(count, custom_value);
-  ft::vector<int> b(count, custom_value);
+  std::vector<std::string> a(count, custom_value);
+  ft::vector<std::string> b(count, custom_value);
 
   ASSERT_EQ(a.size(), b.size()) << "size";
   ASSERT_EQ(a.capacity(), b.capacity()) << "capacity";
