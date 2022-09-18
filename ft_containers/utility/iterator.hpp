@@ -83,17 +83,19 @@ do_distance(Iter first, Iter last, std::random_access_iterator_tag)
 
 
 /**
- * Calculates the number of elements between first and last,
- * If it is a random-access iterator,
- * the function uses operator- to calculate this.
- * Otherwise, the function uses the increase
- * operator (operator++) repeatedly.
+ * Calculates the number of elements between first and last.
+ *
+ * Based on iterator category to optimize the calculation time
+ * uses (operator-), if it is a random access iterator.
+ *
+ * Otherwise, the function uses (operator++) repeatedly.
 **/
 template<class Iter>
 typename ft::iterator_traits<Iter>::difference_type
 distance(Iter first, Iter last) {
-  typename ft::iterator_traits<Iter>::iterator_category iter_category();
-  return ft::detail::do_distance(first, last, iter_category);
+  typedef typename ft::iterator_traits<Iter>::iterator_category iterator_category;
+
+  return ft::detail::do_distance(first, last, iterator_category());
 }
 
 
