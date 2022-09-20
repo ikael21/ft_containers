@@ -4,6 +4,8 @@ Objective of the project is to get familiar with
 `the standard C++ template library`
 by recoding some of the STL containers.
 
+*All the code was written according to С++98 Standard*
+
 ### [Vector](https://cplusplus.com/reference/vector/vector/)
 ```
 template <class T, class Allocator = std::allocator<T> >
