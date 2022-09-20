@@ -80,3 +80,17 @@ TEST(Vector, iterators_constructor_with_zero_diff) {
   ASSERT_EQ(a.capacity(), b.capacity()) << "capacity";
   ASSERT_EQ(a.data(), a.data()) << "data";
 }
+
+TEST(Vector, copy_constructor) {
+  const size_t count = 10;
+  const ft_strings_vector  ft_b(count);
+
+  ft_strings_vector  b(ft_b);
+
+  ASSERT_EQ(b.size(), ft_b.size()) << "size of ft";
+  ASSERT_EQ(b.capacity(), ft_b.capacity()) << "capacity";
+  ASSERT_NE(b.data(), ft_b.data());
+
+  for (size_t i = 0; i < b.size(); ++i)
+    ASSERT_EQ(b[i], ft_b[i]);
+}
